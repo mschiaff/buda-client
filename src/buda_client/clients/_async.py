@@ -40,5 +40,8 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
         data = response.json()
         return data if raw or not endpoint.model else endpoint.model(**data)
     
+    async def me(self, raw: bool = False) -> dict[str, str]:
+        return await self._request(self._me_endpoint(), raw=raw)
+    
     async def ticker(self, market_id: str, raw: bool = False) -> Ticker | dict[str, Any]:
         return await self._request(self._ticker_endpoint(market_id), raw=raw)

@@ -9,6 +9,7 @@ from buda_client.auth import BudaAuth
 from buda_client.settings import BudaSettings
 from buda_client.endpoints.base import Endpoint
 from buda_client.endpoints.markets import MarketEndpoints
+from buda_client.endpoints.account import AccountEndpoints
 
 
 HttpxClientType = Annotated[
@@ -22,7 +23,7 @@ HttpxClient = Annotated[
 ]
 
 
-class BaseClient[T: HttpxClient](MarketEndpoints, ABC):
+class BaseClient[T: HttpxClient](AccountEndpoints, MarketEndpoints, ABC):
     """Base client class for Buda API clients."""
     
     def __init__(

@@ -40,5 +40,8 @@ class BudaClient(BaseClient[Client]):
         data = response.json()
         return data if raw or not endpoint.model else endpoint.model(**data)
     
+    def me(self, raw: bool = False) -> dict[str, str]:
+        return self._request(self._me_endpoint(), raw=raw)
+
     def ticker(self, market_id: str, raw: bool = False) -> Ticker | dict[str, Any]:
         return self._request(self._ticker_endpoint(market_id), raw=raw)
