@@ -40,10 +40,6 @@ class BaseClient[T: HttpxClient](AccountEndpoints, MarketEndpoints, ABC):
             headers=self._settings.headers
         )
     
-    @abstractmethod
-    def _request(self, endpoint: Endpoint, raw: bool = False):
-        raise NotImplementedError("Subclasses must implement this method")
-    
     def _build_request(self, endpoint: Endpoint[Any]) -> Request:
         return self._client.build_request(
             url=endpoint.path,
@@ -51,3 +47,7 @@ class BaseClient[T: HttpxClient](AccountEndpoints, MarketEndpoints, ABC):
             method=endpoint.method,
             params=endpoint.params,
         )
+    
+    @abstractmethod
+    def _request(self, endpoint: Endpoint, raw: bool = False):
+        raise NotImplementedError("Subclasses must implement this method")

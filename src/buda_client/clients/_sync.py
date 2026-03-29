@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypeVar, overload, override
+from typing import TYPE_CHECKING, Any, Literal, TypeVar, overload, override
 
 from httpx import Client
 from pydantic import BaseModel
@@ -12,36 +12,48 @@ from buda_client.endpoints.base import Endpoint
 
 if TYPE_CHECKING:
     from buda_client.models.markets import Ticker
+    from buda_client.models.account import UserInfo
 
 
 T = TypeVar("T", bound=BaseModel)
 
 
-class BudaClient(BaseClient[Client]):
+class SyncBudaClient(BaseClient[Client]):
     """Synchronous client for the Buda API."""
     
     def __init__(self, settings: BudaSettings | None = None, auth: BudaAuth | None = None) -> None:
         super().__init__(client=Client, settings=settings, auth=auth)
     
+    def _raw_request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
+        response = self._client.request(method, path, auth=self._auth, **kwargs)
+        response.raise_for_status()
+        return response.json()
+    
     @overload
-    def _request(self, endpoint: Endpoint[T], raw: bool = False) -> T: ...
+    def _request(self, endpoint: Endpoint[T], raw: Literal[False] = ...) -> T: ...
     @overload
-    def _request(self, endpoint: Endpoint[None]) -> dict[str, Any]: ...
-    @overload
-    def _request(self, endpoint: Endpoint[None], raw: bool = ...) -> dict[str, Any]: ...
-    @overload
-    def _request(self, endpoint: Endpoint[T], raw: bool = True) -> dict[str, Any]: ...
+    def _request(self, endpoint: Endpoint[T], raw: Literal[True]) -> dict[str, Any]: ...
 
     @override
-    def _request(self, endpoint: Endpoint[T | None], raw: bool = False) -> T | dict[str, Any]:
+    def _request(self, endpoint: Endpoint[T], raw: bool = False) -> T | dict[str, Any]:
         request = self._build_request(endpoint)
         response = self._client.send(request, auth=self._auth)
         response.raise_for_status()
         data = response.json()
-        return data if raw or not endpoint.model else endpoint.model(**data)
+        return data if raw else endpoint.model(**data)
     
-    def me(self, raw: bool = False) -> dict[str, str]:
-        return self._request(self._me_endpoint(), raw=raw)
+    @overload
+    def me(self, raw: Literal[False] = ...) -> UserInfo: ...
+    @overload
+    def me(self, raw: Literal[True]) -> dict[str, Any]: ...
 
+    def me(self, raw: bool = False) -> UserInfo | dict[str, Any]:
+        return self._request(self._me_endpoint(), raw=raw)
+    
+    @overload
+    def ticker(self, market_id: str, raw: Literal[False] = ...) -> Ticker: ...
+    @overload
+    def ticker(self, market_id: str, raw: Literal[True]) -> dict[str, Any]: ...
+    
     def ticker(self, market_id: str, raw: bool = False) -> Ticker | dict[str, Any]:
         return self._request(self._ticker_endpoint(market_id), raw=raw)
