@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound=BaseModel)
 
 
-class SyncBudaClient(BaseClient[Client]):
+class BudaClient(BaseClient[Client]):
     """Synchronous client for the Buda API."""
     
     def __init__(self, settings: BudaSettings | None = None, auth: BudaAuth | None = None) -> None:
