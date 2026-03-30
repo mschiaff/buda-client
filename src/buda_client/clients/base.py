@@ -8,6 +8,7 @@ from httpx import Client, AsyncClient, Request
 from buda_client.auth import BudaAuth
 from buda_client.settings import BudaSettings
 from buda_client.endpoints.base import Endpoint
+from buda_client.endpoints.orders import OrderEndpoints
 from buda_client.endpoints.markets import MarketEndpoints
 from buda_client.endpoints.account import AccountEndpoints
 
@@ -23,7 +24,7 @@ HttpxClient = Annotated[
 ]
 
 
-class BaseClient[T: HttpxClient](AccountEndpoints, MarketEndpoints, ABC):
+class BaseClient[T: HttpxClient](AccountEndpoints, MarketEndpoints, OrderEndpoints, ABC):
     """Base client class for Buda API clients."""
     
     def __init__(

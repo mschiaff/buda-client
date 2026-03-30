@@ -15,3 +15,17 @@ class CurrencyValue(BaseModel):
             value=value,
             currency=currency
         )
+
+
+class PriceAmount(BaseModel):
+    price: float
+    amount: float
+
+    @model_validator(mode="before")
+    @classmethod
+    def parse_list(cls, data: list[str]) -> dict[str, float]:
+        price, amount = data
+        return dict(
+            price=price,
+            amount=amount
+        )
