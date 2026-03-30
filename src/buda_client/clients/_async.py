@@ -33,15 +33,10 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         await self._client.aclose()
     
-    async def _raw_request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
-        response = await self._client.request(method, path, auth=self._auth, **kwargs)
-        response.raise_for_status()
-        return response.json()
-    
     @overload
-    async def _request(self, endpoint: Endpoint[T], raw: Literal[False] = ...) -> T: ...
+    async def _request(self, endpoint: Endpoint[T], raw: Literal[False] = ..., with_auth: bool = ...) -> T: ...
     @overload
-    async def _request(self, endpoint: Endpoint[T], raw: Literal[True]) -> dict[str, Any]: ...
+    async def _request(self, endpoint: Endpoint[T], raw: Literal[True], with_auth: bool = ...) -> dict[str, Any]: ...
 
     @override
     async def _request(self, endpoint: Endpoint[T], raw: bool = False, with_auth: bool = True) -> T | dict[str, Any]:
@@ -50,6 +45,11 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
         response.raise_for_status()
         data = response.json()
         return data if raw else endpoint.model(**data)
+    
+    async def _raw_request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
+        response = await self._client.request(method, path, auth=self._auth, **kwargs)
+        response.raise_for_status()
+        return response.json()
     
     @overload
     async def me(self, raw: Literal[False] = ...) -> UserInfo: ...
