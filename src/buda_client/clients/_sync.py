@@ -21,6 +21,13 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound=BaseModel)
 
 
+class PublicAPI:
+    __slots__ = ("_client",)
+
+    def __init__(self, client: BudaClient):
+        self._client: BudaClient = client
+
+
 class BudaClient(BaseClient[Client]):
     """Synchronous client for the Buda API."""
     
