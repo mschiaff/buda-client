@@ -12,7 +12,7 @@ from buda_client.endpoints.base import Endpoint
 
 if TYPE_CHECKING:
     from buda_client.models.account import UserInfo
-    from buda_client.models.orders import OrderBook
+    from buda_client.models.orders import OrderBook, Trades
     from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
 
 
@@ -84,3 +84,11 @@ class BudaClient(BaseClient[Client]):
 
     def order_book(self, market_id: str, raw: bool = False) -> OrderBook | dict[str, Any]:
         return self._request(self._order_book_endpoint(market_id), raw=raw)
+    
+    @overload
+    def trades(self, market_id: str, raw: Literal[False] = ...) -> Trades: ...
+    @overload
+    def trades(self, market_id: str, raw: Literal[True] = ...) -> dict[str, Any]: ...
+
+    def trades(self, market_id: str, raw: bool = False) -> Trades | dict[str, Any]:
+        return self._request(self._trades_endpoint(market_id), raw=raw)
