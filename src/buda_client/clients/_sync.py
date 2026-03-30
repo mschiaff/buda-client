@@ -12,10 +12,10 @@ from buda_client.endpoints.base import Endpoint
 
 if TYPE_CHECKING:
     from buda_client.models.account import UserInfo
-    from buda_client.models.orders import OrderBook, Trades
+    from buda_client.models.orders import OrderBook, Trades, Quotation
     from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
     
-    from buda_client.endpoints.orders import TradesParams
+    from buda_client.endpoints.orders import TradesParams, QuotationParams
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -46,8 +46,8 @@ class BudaClient(BaseClient[Client]):
         data = response.json()
         return data if raw else endpoint.model(**data)
     
-    def _raw_request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
-        response = self._client.request(method, path, auth=self._auth, **kwargs)
+    def _raw_request(self, method: str, path: str, with_auth: bool = True, **kwargs: Any) -> dict[str, Any]:
+        response = self._client.request(method, path, auth=self._auth if with_auth else None, **kwargs)
         response.raise_for_status()
         return response.json()
     
@@ -94,3 +94,11 @@ class BudaClient(BaseClient[Client]):
 
     def trades(self, market_id: str, raw: bool = False, *, params: TradesParams | None = None) -> Trades | dict[str, Any]:
         return self._request(self._trades_endpoint(market_id, params=params), raw=raw, with_auth=False if params else True)
+    
+    @overload
+    def quotations(self, market_id: str, *, params: QuotationParams, raw: Literal[False] = ...) -> Quotation: ...
+    @overload
+    def quotations(self, market_id: str, *, params: QuotationParams, raw: Literal[True]) -> dict[str, Any]: ...
+
+    def quotations(self, market_id: str, *, params: QuotationParams, raw: bool = False) -> Quotation | dict[str, Any]:
+        return self._request(self._quotation_endpoint(market_id, params=params), raw=raw)
