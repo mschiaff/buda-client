@@ -24,6 +24,12 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
     def __init__(self, settings: BudaSettings | None = None, auth: BudaAuth | None = None) -> None:
         super().__init__(client=AsyncClient, settings=settings, auth=auth)
     
+    async def __aenter__(self) -> AsyncBudaClient:
+        return self
+    
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        await self._client.aclose()
+    
     async def _raw_request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
         response = await self._client.request(method, path, auth=self._auth, **kwargs)
         response.raise_for_status()
@@ -46,7 +52,7 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
     async def me(self, raw: Literal[False] = ...) -> UserInfo: ...
     @overload
     async def me(self, raw: Literal[True]) -> dict[str, Any]: ...
-    
+
     async def me(self, raw: bool = False) -> UserInfo | dict[str, Any]:
         return await self._request(self._me_endpoint(), raw=raw)
     

@@ -24,6 +24,12 @@ class BudaClient(BaseClient[Client]):
     def __init__(self, settings: BudaSettings | None = None, auth: BudaAuth | None = None) -> None:
         super().__init__(client=Client, settings=settings, auth=auth)
     
+    def __enter__(self) -> BudaClient:
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self._client.close()
+    
     def _raw_request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
         response = self._client.request(method, path, auth=self._auth, **kwargs)
         response.raise_for_status()
