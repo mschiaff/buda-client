@@ -1,9 +1,19 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TypedDict, Annotated
+
+from pydantic import Field, TypeAdapter
 
 from buda_client.endpoints.base import Endpoint
 from buda_client.models.orders import OrderBook, Trades
+
+
+class TradesParams(TypedDict, total=False):
+    timestamp: Annotated[int | None, Field(gt=0)]
+    limit: Annotated[int | None, Field(gt=0, le=100)]
+
+
+TradesParamsAdapter = TypeAdapter(TradesParams)
 
 
 class OrderEndpoints:
@@ -15,5 +25,6 @@ class OrderEndpoints:
     def _order_book_endpoint(self, market_id: str) -> Endpoint[OrderBook]:
         return Endpoint(model=OrderBook, method="GET", path=f"/markets/{market_id}/order_book")
     
-    def _trades_endpoint(self, market_id: str) -> Endpoint[Trades]:
-        return Endpoint(model=Trades, method="GET", path=f"/markets/{market_id}/trades")
+    def _trades_endpoint(self, market_id: str, *, params: TradesParams | None = None) -> Endpoint[Trades]:
+        params = TradesParamsAdapter.validate_python(params) if params else {}
+        return Endpoint(model=Trades, method="GET", path=f"/markets/{market_id}/trades", params=params)

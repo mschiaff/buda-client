@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Literal, Mapping, Any
 
-from pydantic import BaseModel, Field
 from pydantic.dataclasses import dataclass
+from pydantic import BaseModel, Field, field_validator
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
@@ -13,3 +13,9 @@ class Endpoint[_T: BaseModel]:
     method: Literal["GET", "POST", "PUT", "DELETE"]
     params: Mapping[str, Any] = Field(default_factory=dict)
     json: Mapping[str, Any] | None = Field(default=None)
+
+    @field_validator("params", mode="before")
+    @classmethod
+    def parse_params(cls, data: Mapping[str, Any]) -> Mapping[str, Any]:
+        # Remove None values to avoid sending them as query parameters
+        return {k: v for k, v in data.items() if v is not None} if data else {}

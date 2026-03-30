@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     from buda_client.models.orders import OrderBook, Trades
     from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
 
+    from buda_client.endpoints.orders import TradesParams
+
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -42,9 +44,9 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
     async def _request(self, endpoint: Endpoint[T], raw: Literal[True]) -> dict[str, Any]: ...
 
     @override
-    async def _request(self, endpoint: Endpoint[T], raw: bool = False) -> T | dict[str, Any]:
+    async def _request(self, endpoint: Endpoint[T], raw: bool = False, with_auth: bool = True) -> T | dict[str, Any]:
         request = self._build_request(endpoint)
-        response = await self._client.send(request, auth=self._auth)
+        response = await self._client.send(request, auth=self._auth if with_auth else None)
         response.raise_for_status()
         data = response.json()
         return data if raw else endpoint.model(**data)
@@ -86,9 +88,9 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
         return await self._request(self._order_book_endpoint(market_id), raw=raw)
     
     @overload
-    def trades(self, market_id: str, raw: Literal[False] = ...) -> Trades: ...
+    async def trades(self, market_id: str, raw: Literal[False] = ..., *, params: TradesParams | None = ...) -> Trades: ...
     @overload
-    def trades(self, market_id: str, raw: Literal[True] = ...) -> dict[str, Any]: ...
+    async def trades(self, market_id: str, raw: Literal[True] = ..., *, params: TradesParams | None = ...) -> dict[str, Any]: ...
 
-    def trades(self, market_id: str, raw: bool = False) -> Trades | dict[str, Any]:
-        return self._request(self._trades_endpoint(market_id), raw=raw)
+    async def trades(self, market_id: str, raw: bool = False, *, params: TradesParams | None = None) -> Trades | dict[str, Any]:
+        return await self._request(self._trades_endpoint(market_id, params=params), raw=raw, with_auth=False if params else True)
