@@ -12,7 +12,7 @@ from buda_client.endpoints.base import Endpoint
 
 if TYPE_CHECKING:
     from buda_client.models.account import UserInfo
-    from buda_client.models.markets import Market, MarketList, Ticker
+    from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -67,9 +67,11 @@ class BudaClient(BaseClient[Client]):
         return self._request(self._markets_endpoint(market_id), raw=raw)
     
     @overload
-    def ticker(self, market_id: str, raw: Literal[False] = ...) -> Ticker: ...
+    def tickers(self, market_id: str, raw: Literal[False] = ...) -> MarketTicker: ...
     @overload
-    def ticker(self, market_id: str, raw: Literal[True]) -> dict[str, Any]: ...
-    
-    def ticker(self, market_id: str, raw: bool = False) -> Ticker | dict[str, Any]:
-        return self._request(self._ticker_endpoint(market_id), raw=raw)
+    def tickers(self, market_id: None = ..., raw: Literal[False] = ...) -> TickerList: ...
+    @overload
+    def tickers(self, market_id: str | None = None, raw: Literal[True] = ...) -> dict[str, Any]: ...
+
+    def tickers(self, market_id: str | None = None, raw: bool = False) -> MarketTicker | TickerList | dict[str, Any]:
+        return self._request(self._tickers_endpoint(market_id), raw=raw)

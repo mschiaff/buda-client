@@ -41,15 +41,25 @@ class MarketList(RootModel[list[Market]]):
 
 class Ticker(BaseModel):
     market_id: str
+    price_variation_24h: float
+    price_variation_7d: float
     last_price: CurrencyValue
+
+
+class MarketTicker(Ticker):
     min_ask: CurrencyValue
     max_bid: CurrencyValue
     volume: CurrencyValue
     quote_volume: CurrencyValue
-    price_variation_24h: float
-    price_variation_7d: float
 
     @model_validator(mode="before")
     @classmethod
     def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
         return data["ticker"]
+
+
+class TickerList(RootModel[list[Ticker]]):
+    @model_validator(mode="before")
+    @classmethod
+    def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
+        return data["tickers"]
