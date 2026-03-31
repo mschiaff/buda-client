@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from pydantic import BaseModel, model_validator
 
-from buda_client.models.common import CurrencyValue, PriceAmount
+if TYPE_CHECKING:
+    from buda_client.models.common import CurrencyValue, PriceAmount
 
 
 QuotationType = Literal[

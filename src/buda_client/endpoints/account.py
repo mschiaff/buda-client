@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from buda_client.endpoints.base import Endpoint
 from buda_client.models.account import UserInfo
 

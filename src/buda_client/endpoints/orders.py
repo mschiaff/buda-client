@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import TypedDict, Annotated
+from typing import Annotated, TypedDict
 
 from pydantic import Field, TypeAdapter
 
 from buda_client.endpoints.base import Endpoint
-from buda_client.models.orders import OrderBook, Trades, Quotation, QuotationType
+from buda_client.models.orders import OrderBook, Quotation, QuotationType, Trades
 
 
 class TradesParams(TypedDict, total=False):
@@ -24,14 +24,20 @@ QuotationParamsAdapter = TypeAdapter(QuotationParams)
 
 
 def order_book_endpoint(market_id: str) -> Endpoint[OrderBook]:
-    return Endpoint(model=OrderBook, method="GET", path=f"/markets/{market_id}/order_book")
+    return Endpoint(
+        model=OrderBook, method="GET", path=f"/markets/{market_id}/order_book"
+    )
 
 
 def trades_endpoint(market_id: str, *, params: TradesParams | None = None) -> Endpoint[Trades]:
     params = TradesParamsAdapter.validate_python(params) if params else {}
-    return Endpoint(model=Trades, method="GET", path=f"/markets/{market_id}/trades", params=params)
+    return Endpoint(
+        model=Trades, method="GET", path=f"/markets/{market_id}/trades", params=params
+    )
 
 
 def quotation_endpoint(market_id: str, *, params: QuotationParams) -> Endpoint[Quotation]:
     params = QuotationParamsAdapter.validate_python(params)
-    return Endpoint(model=Quotation, method="POST", path=f"/markets/{market_id}/quotations", json=params)
+    return Endpoint(
+        model=Quotation, method="POST", path=f"/markets/{market_id}/quotations", json=params
+    )
