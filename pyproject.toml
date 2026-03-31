@@ -25,5 +25,29 @@ dev = [
     "ipykernel>=7.2.0",
     "ipywidgets>=8.1.8",
     "notebook>=7.5.5",
+    "pyright>=1.1.408",
     "ruff>=0.15.8",
 ]
+
+[tool.pyright]
+pythonVersion = "3.13"
+typeCheckingMode = "strict"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TC",   # flake8-type-checking
+    "RUF",  # ruff-specific rules
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["buda_client"]

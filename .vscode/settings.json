@@ -1,0 +1,4 @@
+{
+    "ruff.nativeServer": true,
+    "ruff.configurationPreference": "filesystemFirst",
+}
