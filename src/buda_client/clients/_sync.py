@@ -126,7 +126,7 @@ class BudaClient(BaseClient[Client]):
             raise ValueError("Authentication was requested, but no auth credentials were provided.")
         
         request = self._build_request(endpoint)
-        response = self._client.send(request, auth=self._auth)
+        response = self._client.send(request, auth=self._auth if authenticated else None)
         response.raise_for_status()
         return response.json() if raw else endpoint.model(**response.json())
     
@@ -134,6 +134,6 @@ class BudaClient(BaseClient[Client]):
         if authenticated and not self._auth:
             raise ValueError("Authentication was requested, but no auth credentials were provided.")
         
-        response = self._client.request(method, path, auth=self._auth, **kwargs)
+        response = self._client.request(method, path, auth=self._auth if authenticated else None, **kwargs)
         response.raise_for_status()
         return response.json()
