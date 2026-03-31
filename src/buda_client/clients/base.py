@@ -49,5 +49,5 @@ class BaseClient[T: HttpxClient](ABC):
         )
     
     @abstractmethod
-    def _request(self, endpoint: Endpoint, raw: bool = False):
+    def _request(self, endpoint: Endpoint, *, raw: bool = False, authenticated: bool = False):
         raise NotImplementedError("Subclasses must implement this method")
