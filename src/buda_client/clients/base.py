@@ -14,11 +14,6 @@ if TYPE_CHECKING:
     from buda_client.endpoints.base import Endpoint
 
 
-HttpxClientType = Annotated[
-    type[Client] | type[AsyncClient],
-    "Must be either type httpx.Client or httpx.AsyncClient"
-]
-
 HttpxClient = Annotated[
     Client | AsyncClient,
     "Must be an instance of httpx.Client or httpx.AsyncClient"
