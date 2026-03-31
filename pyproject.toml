@@ -8,9 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
-    "attrs>=26.1.0",
     "httpx>=0.28.1",
-    "keyring>=25.7.0",
     "pydantic-settings>=2.13.1",
     "tenacity>=9.1.4",
     "websockets>=16.0",
