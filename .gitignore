@@ -15,3 +15,6 @@ wheels/
 # Jupyter Notebook files
 .ipynb_checkpoints/
 *.ipynb
+
+# Cache files
+.ruff_cache/
