@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Annotated, Any
 
 from httpx import AsyncClient, Client, Request
-from pydantic import BaseModel
 
 from buda_client.settings import BudaSettings
 
@@ -20,7 +18,7 @@ HttpxClient = Annotated[
 ]
 
 
-class BaseClient[T: HttpxClient](ABC):
+class BaseClient[T: HttpxClient]:
     """Base client class for Buda API clients."""
 
     __slots__ = ("_auth", "_client", "_settings")
@@ -45,16 +43,4 @@ class BaseClient[T: HttpxClient](ABC):
             json=endpoint.json,
             method=endpoint.method,
             params=endpoint.params,
-        )
-    
-    @abstractmethod
-    def _request[R: BaseModel](
-            self,
-            endpoint: Endpoint[R],
-            *,
-            raw: bool = False,
-            authenticated: bool = False
-    ) -> R | dict[str, Any]:
-        raise NotImplementedError(
-            "Subclasses must implement this method"
         )

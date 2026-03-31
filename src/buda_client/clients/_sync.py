@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Literal, TypeVar, overload, override
+from typing import TYPE_CHECKING, Any, Literal, TypeVar, overload
 from warnings import deprecated
 
 from httpx import Client
@@ -315,7 +315,6 @@ class BudaClient(BaseClient[Client]):
             authenticated: bool = ...
     ) -> dict[str, Any]: ...
 
-    @override
     def _request(
             self,
             endpoint: Endpoint[T],
