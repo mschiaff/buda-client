@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, model_validator
 
-from buda_client.models.common import CurrencyValue
+if TYPE_CHECKING:
+    from buda_client.models.common import CurrencyValue
 
 
 class UserInfo(BaseModel):

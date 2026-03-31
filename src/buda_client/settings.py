@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import Annotated
 
+from pydantic import BeforeValidator, Field, HttpUrl
 from pydantic.dataclasses import dataclass
-from pydantic import Field, HttpUrl, BeforeValidator
-
 
 BaseUrl = Annotated[
     str, 

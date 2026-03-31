@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Annotated, Any, TypeVar
+from typing import TYPE_CHECKING, Annotated, Any
 
 from httpx import AsyncClient, Client, Request
 from pydantic import BaseModel
@@ -18,8 +18,6 @@ HttpxClient = Annotated[
     Client | AsyncClient,
     "Must be an instance of httpx.Client or httpx.AsyncClient"
 ]
-
-_T = TypeVar("_T", bound=BaseModel)
 
 
 class BaseClient[T: HttpxClient](ABC):
@@ -50,13 +48,13 @@ class BaseClient[T: HttpxClient](ABC):
         )
     
     @abstractmethod
-    def _request(
+    def _request[R: BaseModel](
             self,
-            endpoint: Endpoint[_T],
+            endpoint: Endpoint[R],
             *,
             raw: bool = False,
             authenticated: bool = False
-    ) -> _T | dict[str, Any]:
+    ) -> R | dict[str, Any]:
         raise NotImplementedError(
             "Subclasses must implement this method"
         )

@@ -3,10 +3,15 @@ from __future__ import annotations
 import base64
 import hmac
 import time
-import httpx
+from typing import TYPE_CHECKING
 
+import httpx
 from httpx import Request
-from collections.abc import Generator
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from httpx import Response
 
 
 class BudaAuth(httpx.Auth):
@@ -43,7 +48,7 @@ class BudaAuth(httpx.Auth):
         
         return hash.hexdigest()
 
-    def auth_flow(self, request: Request) -> Generator[Request, None, None]:
+    def auth_flow(self, request: Request) -> Generator[Request, Response]:
         nonce = self.get_nonce()
         signature = self.sign(request, nonce)
         

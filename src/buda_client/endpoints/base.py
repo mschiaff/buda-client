@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-from typing import Literal, Mapping, Any
+from typing import TYPE_CHECKING, Any, Literal
 
-from pydantic.dataclasses import dataclass
 from pydantic import BaseModel, Field, field_validator
+from pydantic.dataclasses import dataclass
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
-class Endpoint[_T: BaseModel]:
+class Endpoint[T: BaseModel]:
     path: str
-    model: type[_T]
+    model: type[T]
     method: Literal["GET", "POST", "PUT", "DELETE"]
     params: Mapping[str, Any] = Field(default_factory=dict)
     json: Mapping[str, Any] | None = Field(default=None)

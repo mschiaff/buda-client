@@ -23,7 +23,7 @@ class PriceAmount(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def parse_list(cls, data: list[str]) -> dict[str, float]:
+    def parse_list(cls, data: list[str]) -> dict[str, str]:
         price, amount = data
         return dict(
             price=price,
