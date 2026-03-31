@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal, TypeVar, overload, override
+from warnings import deprecated
 
 from httpx import AsyncClient
 from pydantic import BaseModel
@@ -9,23 +10,102 @@ from buda_client.auth import BudaAuth
 from buda_client.settings import BudaSettings
 from buda_client.clients.base import BaseClient
 from buda_client.endpoints.base import Endpoint
+from buda_client.endpoints import markets, account, orders
 
 if TYPE_CHECKING:
     from buda_client.models.account import UserInfo
     from buda_client.models.orders import OrderBook, Trades, Quotation
     from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
-
+    
     from buda_client.endpoints.orders import TradesParams, QuotationParams
 
 
 T = TypeVar("T", bound=BaseModel)
 
 
+class AsyncPublicAPI:
+    __slots__ = ("_client",)
+
+    def __init__(self, client: AsyncBudaClient):
+        self._client: AsyncBudaClient = client
+
+    @overload
+    async def markets(self, market_id: str, *, raw: Literal[False] = ..., authenticated: bool = ...) -> Market: ...
+    @overload
+    async def markets(self, market_id: None = ..., *, raw: Literal[False] = ..., authenticated: bool = ...) -> MarketList: ...
+    @overload
+    async def markets(self, market_id: str | None = None, *, raw: Literal[True], authenticated: bool = ...) -> dict[str, Any]: ...
+    
+    async def markets(self, market_id: str | None = None, *, raw: bool = False, authenticated: bool = False) -> Market | MarketList | dict[str, Any]:
+        return await self._client._request(markets.markets_endpoint(market_id), raw=raw, authenticated=authenticated)
+    
+    @overload
+    async def tickers(self, market_id: str, *, raw: Literal[False] = ..., authenticated: bool = ...) -> MarketTicker: ...
+    @overload
+    async def tickers(self, market_id: None = ..., *, raw: Literal[False] = ..., authenticated: bool = ...) -> TickerList: ...
+    @overload
+    async def tickers(self, market_id: str | None = None, *, raw: Literal[True], authenticated: bool = ...) -> dict[str, Any]: ...
+    
+    async def tickers(self, market_id: str | None = None, *, raw: bool = False, authenticated: bool = False) -> MarketTicker | TickerList | dict[str, Any]:
+        return await self._client._request(markets.tickers_endpoint(market_id), raw=raw, authenticated=authenticated)
+    
+    @overload
+    async def order_book(self, market_id: str, *, raw: Literal[False] = ..., authenticated: bool = ...) -> OrderBook: ...
+    @overload
+    async def order_book(self, market_id: str, *, raw: Literal[True], authenticated: bool = ...) -> dict[str, Any]: ...
+    
+    async def order_book(self, market_id: str, *, raw: bool = False, authenticated: bool = False) -> OrderBook | dict[str, Any]:
+        return await self._client._request(orders.order_book_endpoint(market_id), raw=raw, authenticated=authenticated)
+    
+    @overload
+    @deprecated("Authenticated trades requests with query params return 401. Use authenticated=False (default) when passing params.")
+    async def trades(self, market_id: str, *, params: TradesParams, authenticated: Literal[True], raw: Literal[False] = ...) -> Trades: ...
+
+    @overload
+    @deprecated("Authenticated trades requests with query params return 401. Use authenticated=False (default) when passing params.")
+    async def trades(self, market_id: str, *, params: TradesParams, authenticated: Literal[True], raw: Literal[True]) -> dict[str, Any]: ...
+    
+    @overload
+    async def trades(self, market_id: str, *, params: TradesParams | None = ..., raw: Literal[False] = ..., authenticated: bool = ...) -> Trades: ...
+    @overload
+    async def trades(self, market_id: str, *, params: TradesParams | None = ..., raw: Literal[True], authenticated: bool = ...) -> dict[str, Any]: ...
+    
+    async def trades(self, market_id: str, *, params: TradesParams | None = None, raw: bool = False, authenticated: bool = False) -> Trades | dict[str, Any]:
+        return await self._client._request(orders.trades_endpoint(market_id, params=params), raw=raw, authenticated=authenticated)
+    
+    @overload
+    async def quotations(self, market_id: str, *, params: QuotationParams, raw: Literal[False] = ..., authenticated: bool = ...) -> Quotation: ...
+    @overload
+    async def quotations(self, market_id: str, *, params: QuotationParams, raw: Literal[True], authenticated: bool = ...) -> dict[str, Any]: ...
+    
+    async def quotations(self, market_id: str, *, params: QuotationParams, raw: bool = False, authenticated: bool = False) -> Quotation | dict[str, Any]:
+        return await self._client._request(orders.quotation_endpoint(market_id, params=params), raw=raw, authenticated=authenticated)
+
+
+class AsyncPrivateAPI:
+    __slots__ = ("_client",)
+
+    def __init__(self, client: AsyncBudaClient):
+        self._client: AsyncBudaClient = client
+    
+    @overload
+    async def me(self, *, raw: Literal[False] = ...) -> UserInfo: ...
+    @overload
+    async def me(self, *, raw: Literal[True]) -> dict[str, Any]: ...
+    
+    async def me(self, *, raw: bool = False) -> UserInfo | dict[str, Any]:
+        return await self._client._request(account.me_endpoint(), raw=raw, authenticated=True)
+
+
 class AsyncBudaClient(BaseClient[AsyncClient]):
     """Asynchronous client for the Buda API."""
+
+    __slots__ = ("public", "private")
     
     def __init__(self, settings: BudaSettings | None = None, auth: BudaAuth | None = None) -> None:
         super().__init__(client=AsyncClient, settings=settings, auth=auth)
+        self.public = AsyncPublicAPI(self)
+        self.private = AsyncPrivateAPI(self)
     
     async def __aenter__(self) -> AsyncBudaClient:
         return self
@@ -34,71 +114,26 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
         await self._client.aclose()
     
     @overload
-    async def _request(self, endpoint: Endpoint[T], raw: Literal[False] = ..., with_auth: bool = ...) -> T: ...
+    @override
+    async def _request(self, endpoint: Endpoint[T], *, raw: Literal[False] = ..., authenticated: bool = ...) -> T: ...
     @overload
-    async def _request(self, endpoint: Endpoint[T], raw: Literal[True], with_auth: bool = ...) -> dict[str, Any]: ...
+    @override
+    async def _request(self, endpoint: Endpoint[T], *, raw: Literal[True], authenticated: bool = ...) -> dict[str, Any]: ...
 
     @override
-    async def _request(self, endpoint: Endpoint[T], raw: bool = False, with_auth: bool = True) -> T | dict[str, Any]:
+    async def _request(self, endpoint: Endpoint[T], *, raw: bool = False, authenticated: bool = False) -> T | dict[str, Any]:
+        if authenticated and not self._auth:
+            raise ValueError("Authentication was requested, but no auth credentials were provided.")
+        
         request = self._build_request(endpoint)
-        response = await self._client.send(request, auth=self._auth if with_auth else None)
+        response = await self._client.send(request, auth=self._auth if authenticated else None)
         response.raise_for_status()
-        data = response.json()
-        return data if raw else endpoint.model(**data)
+        return response.json() if raw else endpoint.model(**response.json())
     
-    async def _raw_request(self, method: str, path: str, with_auth: bool = True, **kwargs: Any) -> dict[str, Any]:
-        response = await self._client.request(method, path, auth=self._auth if with_auth else None, **kwargs)
+    async def _raw_request(self, method: str, path: str, *, authenticated: bool = False, **kwargs: Any) -> dict[str, Any]:
+        if authenticated and not self._auth:
+            raise ValueError("Authentication was requested, but no auth credentials were provided.")
+        
+        response = await self._client.request(method, path, auth=self._auth if authenticated else None, **kwargs)
         response.raise_for_status()
         return response.json()
-    
-    @overload
-    async def me(self, raw: Literal[False] = ...) -> UserInfo: ...
-    @overload
-    async def me(self, raw: Literal[True]) -> dict[str, Any]: ...
-
-    async def me(self, raw: bool = False) -> UserInfo | dict[str, Any]:
-        return await self._request(self._me_endpoint(), raw=raw)
-    
-    @overload
-    async def markets(self, market_id: str, raw: Literal[False] = ...) -> Market: ...
-    @overload
-    async def markets(self, market_id: None = ..., raw: Literal[False] = ...) -> MarketList: ...
-    @overload
-    async def markets(self, market_id: str | None = None, raw: Literal[True] = ...) -> dict[str, Any]: ...
-
-    async def markets(self, market_id: str | None = None, raw: bool = False) -> Market | MarketList | dict[str, Any]:
-        return await self._request(self._markets_endpoint(market_id), raw=raw)
-    
-    @overload
-    async def tickers(self, market_id: str, raw: Literal[False] = ...) -> MarketTicker: ...
-    @overload
-    async def tickers(self, market_id: None = ..., raw: Literal[False] = ...) -> TickerList: ...
-    @overload
-    async def tickers(self, market_id: str | None = None, raw: Literal[True] = ...) -> dict[str, Any]: ...
-
-    async def tickers(self, market_id: str | None = None, raw: bool = False) -> MarketTicker | TickerList | dict[str, Any]:
-        return await self._request(self._tickers_endpoint(market_id), raw=raw)
-    
-    @overload
-    async def order_book(self, market_id: str, raw: Literal[False] = ...) -> OrderBook: ...
-    @overload
-    async def order_book(self, market_id: str, raw: Literal[True] = ...) -> dict[str, Any]: ...
-
-    async def order_book(self, market_id: str, raw: bool = False) -> OrderBook | dict[str, Any]:
-        return await self._request(self._order_book_endpoint(market_id), raw=raw)
-    
-    @overload
-    async def trades(self, market_id: str, raw: Literal[False] = ..., *, params: TradesParams | None = ...) -> Trades: ...
-    @overload
-    async def trades(self, market_id: str, raw: Literal[True] = ..., *, params: TradesParams | None = ...) -> dict[str, Any]: ...
-
-    async def trades(self, market_id: str, raw: bool = False, *, params: TradesParams | None = None) -> Trades | dict[str, Any]:
-        return await self._request(self._trades_endpoint(market_id, params=params), raw=raw, with_auth=False if params else True)
-    
-    @overload
-    async def quotations(self, market_id: str, *, params: QuotationParams, raw: Literal[False] = ...) -> Quotation: ...
-    @overload
-    async def quotations(self, market_id: str, *, params: QuotationParams, raw: Literal[True]) -> dict[str, Any]: ...
-
-    async def quotations(self, market_id: str, *, params: QuotationParams, raw: bool = False) -> Quotation | dict[str, Any]:
-        return await self._request(self._quotation_endpoint(market_id, params=params), raw=raw)
