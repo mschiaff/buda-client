@@ -16,7 +16,7 @@ from buda_client.models.orders import OrderBook, Quotation, Trades  # noqa: TC00
 
 if TYPE_CHECKING:
     from buda_client.endpoints.base import Endpoint
-    from buda_client.endpoints.orders import QuotationParams, TradesParams
+    from buda_client.endpoints.orders import QuotationPayload, TradesParams
     from buda_client.providers import BudaCredentials
     from buda_client.settings import BudaSettings
 
@@ -211,7 +211,7 @@ class PublicAPI:
             self,
             market_id: str,
             *,
-            params: QuotationParams,
+            payload: QuotationPayload,
             raw: Literal[False] = ...,
             authenticated: bool = ...,
     ) -> Quotation: ...
@@ -220,7 +220,7 @@ class PublicAPI:
             self,
             market_id: str,
             *,
-            params: QuotationParams,
+            payload: QuotationPayload,
             raw: Literal[True],
             authenticated: bool = ...,
     ) -> dict[str, Any]: ...
@@ -229,14 +229,14 @@ class PublicAPI:
             self,
             market_id: str,
             *,
-            params: QuotationParams,
+            payload: QuotationPayload,
             raw: bool = False,
             authenticated: bool = False,
     ) -> Quotation | dict[str, Any]:
         return self._client._request(
             orders.quotation_endpoint(
                 market_id,
-                params=params
+                payload=payload
             ),
             raw=raw,
             authenticated=authenticated,

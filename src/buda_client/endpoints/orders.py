@@ -13,14 +13,14 @@ class TradesParams(TypedDict, total=False):
     limit: Annotated[int | None, Field(gt=0, le=100)]
 
 
-class QuotationParams(TypedDict, total=False):
+class QuotationPayload(TypedDict, total=False):
     type: Annotated[QuotationType, Field(...)]
     amount: Annotated[float, Field(..., gt=0)]
     limit: NotRequired[Annotated[float | None, Field(default=None, gt=0)]]
 
 
 TradesParamsAdapter = TypeAdapter(TradesParams)
-QuotationParamsAdapter = TypeAdapter(QuotationParams)
+QuotationPayloadAdapter = TypeAdapter(QuotationPayload)
 
 
 def order_book_endpoint(market_id: str) -> Endpoint[OrderBook]:
@@ -36,8 +36,8 @@ def trades_endpoint(market_id: str, *, params: TradesParams | None = None) -> En
     )
 
 
-def quotation_endpoint(market_id: str, *, params: QuotationParams) -> Endpoint[Quotation]:
-    params = QuotationParamsAdapter.validate_python(params)
+def quotation_endpoint(market_id: str, *, payload: QuotationPayload) -> Endpoint[Quotation]:
+    payload = QuotationPayloadAdapter.validate_python(payload)
     return Endpoint(
-        model=Quotation, method="POST", path=f"/markets/{market_id}/quotations", json=params
+        model=Quotation, method="POST", path=f"/markets/{market_id}/quotations", json=payload
     )
