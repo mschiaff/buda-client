@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from buda_client.providers import BudaCredentials
 
 
-HttpxClient = Annotated[
+type HttpxClient = Annotated[
     Client | AsyncClient,
     "Must be an instance of httpx.Client or httpx.AsyncClient"
 ]

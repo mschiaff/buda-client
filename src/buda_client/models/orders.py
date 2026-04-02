@@ -6,7 +6,7 @@ from pydantic import BaseModel, model_validator
 
 from buda_client.models.common import CurrencyValue, PriceAmount  # noqa: TC001
 
-QuotationType = Literal[
+type QuotationType = Literal[
     "bid_given_size", "bid_given_earned_base",
     "bid_given_value", "bid_given_spent_quote",
     "ask_given_size", "ask_given_spent_base",
