@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, RootModel, model_validator
 
 from buda_client.models.common import CurrencyValue  # noqa: TC001
 
@@ -98,3 +98,28 @@ class AccountInfo(BaseModel):
     funds_source_other: str | None
     patrimony_source: str | None
     operation_funds_source: str | None
+
+
+class Balance(BaseModel):
+    id: str
+    amount: CurrencyValue
+    available_amount: CurrencyValue
+    promissory_amount: CurrencyValue
+    available_for_orders_amount: CurrencyValue
+    frozen_amount: CurrencyValue
+    pending_withdraw_amount: CurrencyValue
+    account_id: int
+
+    @model_validator(mode="before")
+    @classmethod
+    def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
+        if data.get("balance"):
+            return data["balance"]
+        return data
+
+
+class BalanceList(RootModel[list[Balance]]):
+    @model_validator(mode="before")
+    @classmethod
+    def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
+        return data["balances"]

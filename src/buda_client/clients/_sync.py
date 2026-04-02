@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from buda_client.clients.base import BaseClient
 from buda_client.endpoints import account, markets, orders
-from buda_client.models.account import UserInfo  # noqa: TC001
+from buda_client.models.account import Balance, BalanceList, UserInfo  # noqa: TC001
 from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList  # noqa: TC001
 from buda_client.models.orders import OrderBook, Quotation, Trades  # noqa: TC001
 
@@ -272,6 +272,40 @@ class PrivateAPI:
             raw=raw,
             authenticated=True
         )
+    
+    @overload
+    def balances(
+            self,
+            currency: str,
+            *,
+            raw: Literal[False] = ...
+    ) -> Balance: ...
+    @overload
+    def balances(
+            self,
+            currency: None = ...,
+            *,
+            raw: Literal[False] = ...
+    ) -> BalanceList: ...
+    @overload
+    def balances(
+            self,
+            currency: str | None = ...,
+            *,
+            raw: Literal[True]
+    ) -> dict[str, Any]: ...
+    
+    def balances(
+            self,
+            currency: str | None = None,
+            *,
+            raw: bool = False
+    ) -> Balance | BalanceList | dict[str, Any]:
+        return self._client._request(
+            account.balances_endpoint(currency),
+            raw=raw,
+            authenticated=True
+    )
 
 
 class BudaClient(BaseClient[Client]):
