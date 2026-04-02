@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, TypedDict
+from typing import Annotated, NotRequired, TypedDict
 
 from pydantic import Field, TypeAdapter
 
@@ -13,10 +13,10 @@ class TradesParams(TypedDict, total=False):
     limit: Annotated[int | None, Field(gt=0, le=100)]
 
 
-class QuotationParams(TypedDict):
+class QuotationParams(TypedDict, total=False):
     type: Annotated[QuotationType, Field(...)]
-    amount: Annotated[float, Field(gt=0)]
-    limit: Annotated[float | None, Field(default=None, gt=0)]
+    amount: Annotated[float, Field(..., gt=0)]
+    limit: NotRequired[Annotated[float | None, Field(default=None, gt=0)]]
 
 
 TradesParamsAdapter = TypeAdapter(TradesParams)
