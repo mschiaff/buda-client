@@ -36,7 +36,7 @@ class EnvCredentials(BudaCredentials):
         super().__init__(*args, **kwargs)
 
 
-class EnvFileCredentials(BudaCredentials):
+class DotEnvCredentials(BudaCredentials):
     """Provider that loads credentials from a .env file."""
 
     model_config = SettingsConfigDict(env_file=".env")

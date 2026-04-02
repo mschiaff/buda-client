@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Literal
+from collections.abc import Mapping  # noqa: TC003
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 from pydantic.dataclasses import dataclass
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)

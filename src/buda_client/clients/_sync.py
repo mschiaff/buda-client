@@ -12,12 +12,12 @@ from buda_client.clients.base import BaseClient
 from buda_client.endpoints import account, markets, orders
 
 if TYPE_CHECKING:
-    from buda_client.auth import BudaAuth
     from buda_client.endpoints.base import Endpoint
     from buda_client.endpoints.orders import QuotationParams, TradesParams
     from buda_client.models.account import UserInfo
     from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
     from buda_client.models.orders import OrderBook, Quotation, Trades
+    from buda_client.providers import BudaCredentials
     from buda_client.settings import BudaSettings
 
 
@@ -282,12 +282,12 @@ class BudaClient(BaseClient[Client]):
     def __init__(
             self,
             settings: BudaSettings | None = None,
-            auth: BudaAuth | None = None
+            provider: BudaCredentials | None = None
         ) -> None:
         super().__init__(
             client=Client,
             settings=settings,
-            auth=auth
+            provider=provider
         )
         self.public = PublicAPI(self)
         self.private = PrivateAPI(self)

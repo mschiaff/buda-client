@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, model_validator
 
-if TYPE_CHECKING:
-    from buda_client.models.common import CurrencyValue, PriceAmount
-
+from buda_client.models.common import CurrencyValue, PriceAmount  # noqa: TC001
 
 QuotationType = Literal[
     "bid_given_size", "bid_given_earned_base",

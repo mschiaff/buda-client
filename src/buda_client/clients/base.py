@@ -4,12 +4,13 @@ from typing import TYPE_CHECKING, Annotated, Any
 
 from httpx import AsyncClient, Client, Request
 
+from buda_client.auth import BudaAuth
 from buda_client.settings import BudaSettings
 
 if TYPE_CHECKING:
 
-    from buda_client.auth import BudaAuth
     from buda_client.endpoints.base import Endpoint
+    from buda_client.providers import BudaCredentials
 
 
 HttpxClient = Annotated[
@@ -27,10 +28,12 @@ class BaseClient[T: HttpxClient]:
             self,
             client: type[T],
             settings: BudaSettings | None = None,
-            auth: BudaAuth | None = None,
+            provider: BudaCredentials | None = None,
     ) -> None:
         self._settings: BudaSettings = settings or BudaSettings()
-        self._auth: BudaAuth | None = auth
+        self._auth: BudaAuth | None = BudaAuth(
+            **provider.model_dump()
+        ) if provider else None
         self._client: T = client(
             base_url=self._settings.base_url,
             timeout=self._settings.timeout,
