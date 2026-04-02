@@ -15,7 +15,7 @@ from buda_client.models.markets import Market, MarketList, MarketTicker, TickerL
 from buda_client.models.orders import OrderBook, Quotation, Trades  # noqa: TC001
 
 if TYPE_CHECKING:
-    from buda_client.endpoints.base import Endpoint
+    from buda_client.endpoints.base import Endpoint, RequestMethod
     from buda_client.endpoints.orders import QuotationPayload, TradesParams
     from buda_client.providers import BudaCredentials
     from buda_client.settings import BudaSettings
@@ -344,7 +344,7 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
 
     async def _raw_request(
             self,
-            method: str,
+            method: RequestMethod,
             path: str,
             *,
             authenticated: bool = False,

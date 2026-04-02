@@ -6,12 +6,14 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field, field_validator
 from pydantic.dataclasses import dataclass
 
+type RequestMethod = Literal["GET", "POST", "PUT", "DELETE"]
+
 
 @dataclass(frozen=True, kw_only=True, slots=True)
 class Endpoint[T: BaseModel]:
     path: str
     model: type[T]
-    method: Literal["GET", "POST", "PUT", "DELETE"]
+    method: RequestMethod
     params: Mapping[str, Any] = Field(default_factory=dict)
     json: Mapping[str, Any] | None = Field(default=None)
 
