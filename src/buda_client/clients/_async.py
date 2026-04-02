@@ -10,13 +10,13 @@ from pydantic import BaseModel
 
 from buda_client.clients.base import BaseClient
 from buda_client.endpoints import account, markets, orders
+from buda_client.models.account import UserInfo  # noqa: TC001
+from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList  # noqa: TC001
+from buda_client.models.orders import OrderBook, Quotation, Trades  # noqa: TC001
 
 if TYPE_CHECKING:
     from buda_client.endpoints.base import Endpoint
     from buda_client.endpoints.orders import QuotationParams, TradesParams
-    from buda_client.models.account import UserInfo
-    from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
-    from buda_client.models.orders import OrderBook, Quotation, Trades
     from buda_client.providers import BudaCredentials
     from buda_client.settings import BudaSettings
 
