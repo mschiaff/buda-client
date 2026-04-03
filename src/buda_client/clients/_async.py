@@ -14,6 +14,7 @@ from buda_client.models.account import Balance, BalanceList, UserInfo  # noqa: T
 from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList  # noqa: TC001
 from buda_client.models.orders import (  # noqa: TC001
     OrderBook,
+    OrderCancelAllResponse,
     OrderCancelResponse,
     OrderCreate,
     OrderCreateResponse,
@@ -397,6 +398,36 @@ class AsyncPrivateAPI:
     ) -> OrderCancelResponse | dict[str, Any]:
         return await self._client._request(
             orders.cancel_order_endpoint(order_id),
+            raw=raw,
+            authenticated=True
+        )
+    
+    @overload
+    async def cancel_all_orders(
+            self,
+            market_id: str | None = None,
+            type: str | None = None,
+            *,
+            raw: Literal[False] = ...,
+    ) -> OrderCancelAllResponse: ...
+    @overload
+    async def cancel_all_orders(
+            self,
+            market_id: str | None = None,
+            type: str | None = None,
+            *,
+            raw: Literal[True],
+    ) -> dict[str, Any]: ...
+    
+    async def cancel_all_orders(
+            self,
+            market_id: str | None = None,
+            type: str | None = None,
+            *,
+            raw: bool = False
+    ) -> OrderCancelAllResponse | dict[str, Any]:
+        return await self._client._request(
+            orders.cancel_all_orders_endpoint(market_id, type),
             raw=raw,
             authenticated=True
         )

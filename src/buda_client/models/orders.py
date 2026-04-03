@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Annotated, Any, Literal, NotRequired, TypedDict
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, RootModel, model_validator
 
 from buda_client.models.common import CurrencyValue, PriceAmount  # noqa: TC001
 
@@ -174,4 +174,13 @@ class OrderCancelResponse(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        return data["order"]
+        if data.get("order"):
+            return data["order"]
+        return data
+
+
+class OrderCancelAllResponse(RootModel[list[OrderCancelResponse]]):
+    @model_validator(mode="before")
+    @classmethod
+    def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
+        return data["orders"]
