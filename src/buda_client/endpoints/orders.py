@@ -7,9 +7,10 @@ from pydantic import Field, TypeAdapter
 from buda_client.endpoints.base import Endpoint
 from buda_client.models.orders import (
     OrderBook,
+    OrderCancelResponse,
     OrderCreate,
+    OrderCreateResponse,
     OrderDetail,
-    OrderResponse,
     Quotation,
     QuotationType,
     Trades,
@@ -50,9 +51,9 @@ def quotation_endpoint(market_id: str, *, payload: QuotationPayload) -> Endpoint
         model=Quotation, method="POST", path=f"/markets/{market_id}/quotations", json=payload
     )
 
-def create_order_endpoint(market_id: str, *, payload: OrderCreate) -> Endpoint[OrderResponse]:
+def create_order_endpoint(market_id: str, *, payload: OrderCreate) -> Endpoint[OrderCreateResponse]:
     return Endpoint(
-        model=OrderResponse,
+        model=OrderCreateResponse,
         method="POST",
         path=f"/markets/{market_id}/orders",
         json=payload.model_dump(exclude_none=True)
@@ -62,4 +63,13 @@ def create_order_endpoint(market_id: str, *, payload: OrderCreate) -> Endpoint[O
 def order_detail_endpoint(order_id: int) -> Endpoint[OrderDetail]:
     return Endpoint(
         model=OrderDetail, method="GET", path=f"/orders/{order_id}"
+    )
+
+
+def cancel_order_endpoint(order_id: int) -> Endpoint[OrderCancelResponse]:
+    return Endpoint(
+        model=OrderCancelResponse,
+        method="PUT",
+        path=f"/orders/{order_id}",
+        json={"state": "canceling"}
     )

@@ -108,7 +108,7 @@ class OrderCreate(BaseModel):
     client_id: str | None = Field(default=None)
 
 
-class OrderResponse(BaseModel):
+class OrderCreateResponse(BaseModel):
     id: int
     client_id: str | None
     amount: CurrencyValue
@@ -132,6 +132,29 @@ class OrderResponse(BaseModel):
 
 
 class OrderDetail(BaseModel):
+    id: int
+    client_id: str | None
+    amount: CurrencyValue
+    created_at: str
+    fee_currency: str
+    limit: CurrencyValue | None
+    market_id: str
+    original_amount: CurrencyValue
+    paid_fee: CurrencyValue
+    price_type: Literal["limit", "market"]
+    order_type: str
+    state: str
+    total_exchanged: CurrencyValue
+    traded_amount: CurrencyValue
+    type: Literal["Bid", "Ask"]
+
+    @model_validator(mode="before")
+    @classmethod
+    def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
+        return data["order"]
+
+
+class OrderCancelResponse(BaseModel):
     id: int
     client_id: str | None
     amount: CurrencyValue
