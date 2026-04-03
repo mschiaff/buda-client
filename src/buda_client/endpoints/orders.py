@@ -8,6 +8,7 @@ from buda_client.endpoints.base import Endpoint
 from buda_client.models.orders import (
     OrderBook,
     OrderCreate,
+    OrderDetail,
     OrderResponse,
     Quotation,
     QuotationType,
@@ -55,4 +56,10 @@ def create_order_endpoint(market_id: str, *, payload: OrderCreate) -> Endpoint[O
         method="POST",
         path=f"/markets/{market_id}/orders",
         json=payload.model_dump(exclude_none=True)
+    )
+
+
+def order_detail_endpoint(order_id: int) -> Endpoint[OrderDetail]:
+    return Endpoint(
+        model=OrderDetail, method="GET", path=f"/orders/{order_id}"
     )

@@ -15,6 +15,7 @@ from buda_client.models.markets import Market, MarketList, MarketTicker, TickerL
 from buda_client.models.orders import (  # noqa: TC001
     OrderBook,
     OrderCreate,
+    OrderDetail,
     OrderResponse,
     Quotation,
     Trades,
@@ -342,6 +343,33 @@ class PrivateAPI:
                 market_id,
                 payload=payload
             ),
+            raw=raw,
+            authenticated=True
+        )
+    
+    @overload
+    def order_detail(
+            self,
+            order_id: int,
+            *,
+            raw: Literal[False] = ...,
+    ) -> OrderDetail: ...
+    @overload
+    def order_detail(
+            self,
+            order_id: int,
+            *,
+            raw: Literal[True],
+    ) -> dict[str, Any]: ...
+
+    def order_detail(
+            self,
+            order_id: int,
+            *,
+            raw: bool = False
+    ) -> OrderDetail | dict[str, Any]:
+        return self._client._request(
+            orders.order_detail_endpoint(order_id),
             raw=raw,
             authenticated=True
         )
