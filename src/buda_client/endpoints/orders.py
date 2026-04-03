@@ -5,7 +5,14 @@ from typing import Annotated, NotRequired, TypedDict
 from pydantic import Field, TypeAdapter
 
 from buda_client.endpoints.base import Endpoint
-from buda_client.models.orders import OrderBook, Quotation, QuotationType, Trades
+from buda_client.models.orders import (
+    OrderBook,
+    OrderCreate,
+    OrderResponse,
+    Quotation,
+    QuotationType,
+    Trades,
+)
 
 
 class TradesParams(TypedDict, total=False):
@@ -40,4 +47,12 @@ def quotation_endpoint(market_id: str, *, payload: QuotationPayload) -> Endpoint
     payload = QuotationPayloadAdapter.validate_python(payload)
     return Endpoint(
         model=Quotation, method="POST", path=f"/markets/{market_id}/quotations", json=payload
+    )
+
+def create_order_endpoint(market_id: str, *, payload: OrderCreate) -> Endpoint[OrderResponse]:
+    return Endpoint(
+        model=OrderResponse,
+        method="POST",
+        path=f"/markets/{market_id}/orders",
+        json=payload.model_dump(exclude_none=True)
     )

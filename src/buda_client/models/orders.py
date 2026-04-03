@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Annotated, Any, Literal, NotRequired, TypedDict
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 from buda_client.models.common import CurrencyValue, PriceAmount  # noqa: TC001
 
@@ -12,6 +12,30 @@ type QuotationType = Literal[
     "ask_given_size", "ask_given_spent_base",
     "ask_given_value", "ask_given_earned_quote"
 ]
+
+
+class LimitOrder(TypedDict, total=False):
+    price: Annotated[float, ...]
+    type: NotRequired[
+        Annotated[
+            Literal[
+                "gtc", "ioc", "fok",
+                "post_only", "gtd"
+            ],
+        ...]
+    ]
+
+
+class StopOrder(TypedDict, total=False):
+    price: Annotated[float, ...]
+    type: NotRequired[
+        Annotated[
+            Literal[
+                "stop_loss",
+                "take_profit"
+            ],
+        ...]
+    ]
 
 
 class OrderBook(BaseModel):
@@ -73,3 +97,35 @@ class Quotation(BaseModel):
     @classmethod
     def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
         return data["quotation"]
+
+
+class OrderCreate(BaseModel):
+    type: Literal["Bid", "Ask"]
+    price_type: Literal["limit", "market"]
+    amount: float
+    limit: LimitOrder | None = Field(default=None)
+    stop: StopOrder | None = Field(default=None)
+    client_id: str | None = Field(default=None)
+
+
+class OrderResponse(BaseModel):
+    id: int
+    client_id: str | None
+    amount: CurrencyValue
+    created_at: str
+    fee_currency: str
+    limit: CurrencyValue | None
+    market_id: str
+    original_amount: CurrencyValue
+    paid_fee: CurrencyValue
+    price_type: Literal["limit", "market"]
+    order_type: str
+    state: str
+    total_exchanged: CurrencyValue
+    traded_amount: CurrencyValue
+    type: Literal["Bid", "Ask"]
+
+    @model_validator(mode="before")
+    @classmethod
+    def parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
+        return data["order"]

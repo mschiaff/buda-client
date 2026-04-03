@@ -10,9 +10,15 @@ from pydantic import BaseModel
 
 from buda_client.clients.base import BaseClient
 from buda_client.endpoints import account, markets, orders
-from buda_client.models.account import UserInfo  # noqa: TC001
+from buda_client.models.account import Balance, BalanceList, UserInfo  # noqa: TC001
 from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList  # noqa: TC001
-from buda_client.models.orders import OrderBook, Quotation, Trades  # noqa: TC001
+from buda_client.models.orders import (  # noqa: TC001
+    OrderBook,
+    OrderCreate,
+    OrderResponse,
+    Quotation,
+    Trades,
+)
 
 if TYPE_CHECKING:
     from buda_client.endpoints.base import Endpoint, RequestMethod
@@ -268,6 +274,73 @@ class AsyncPrivateAPI:
     ) -> UserInfo | dict[str, Any]:
         return await self._client._request(
             account.me_endpoint(),
+            raw=raw,
+            authenticated=True
+        )
+    
+    @overload
+    async def balances(
+            self,
+            currency: str,
+            *,
+            raw: Literal[False] = ...
+    ) -> Balance: ...
+    @overload
+    async def balances(
+            self,
+            currency: None = ...,
+            *,
+            raw: Literal[False] = ...
+    ) -> BalanceList: ...
+    @overload
+    async def balances(
+            self,
+            currency: str | None = ...,
+            *,
+            raw: Literal[True]
+    ) -> dict[str, Any]: ...
+    
+    async def balances(
+            self,
+            currency: str | None = None,
+            *,
+            raw: bool = False
+    ) -> Balance | BalanceList | dict[str, Any]:
+        return await self._client._request(
+            account.balances_endpoint(currency),
+            raw=raw,
+            authenticated=True
+    )
+
+    @overload
+    async def create_order(
+            self,
+            market_id: str,
+            *,
+            payload: OrderCreate,
+            raw: Literal[False] = ...,
+    ) -> OrderResponse: ...
+    @overload
+    async def create_order(
+            self,
+            market_id: str,
+            *,
+            payload: OrderCreate,
+            raw: Literal[True],
+    ) -> dict[str, Any]: ...
+
+    async def create_order(
+            self,
+            market_id: str,
+            *,
+            payload: OrderCreate,
+            raw: bool = False
+    ) -> OrderResponse | dict[str, Any]:
+        return await self._client._request(
+            orders.create_order_endpoint(
+                market_id,
+                payload=payload
+            ),
             raw=raw,
             authenticated=True
         )
