@@ -8,7 +8,6 @@ from buda_client.auth import BudaAuth
 from buda_client.settings import BudaSettings
 
 if TYPE_CHECKING:
-
     from buda_client.endpoints.base import Endpoint
     from buda_client.providers import BudaCredentials
 

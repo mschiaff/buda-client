@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from pydantic import BeforeValidator, Field, HttpUrl
+from pydantic import BeforeValidator, Field, HttpUrl, WebsocketUrl
 from pydantic.dataclasses import dataclass
 
 BaseUrl = Annotated[
@@ -20,6 +20,10 @@ class BudaSettings:
     base_url: BaseUrl = Field(
         default="https://www.buda.com/api/v2",
         description="Base URL for the Buda API",
+    )
+    base_uri: WebsocketUrl = Field(
+        default=WebsocketUrl("wss://realtime.buda.com"),
+        description="Base URI for the Buda WebSocket API",
     )
     user_agent: str = Field(
         default="python-buda-client/0.1.0",
