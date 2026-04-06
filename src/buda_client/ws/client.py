@@ -98,6 +98,7 @@ class BudaWebSocketClient:
             ping_timeout=self._settings.ping_timeout,
             close_timeout=self._settings.close_timeout,
             open_timeout=self._settings.open_timeout,
+            user_agent_header=self._settings.user_agent,
         ):
             try:
                 logger.info("Connected to %s", url)
