@@ -9,6 +9,7 @@ from httpx import AsyncClient
 from pydantic import BaseModel
 
 from buda_client.core.limiter import AsyncRateLimiter
+from buda_client.core.retry import async_retry_on_error
 from buda_client.rest.client.base import BaseClient
 from buda_client.rest.endpoints import account, markets, orders
 from buda_client.rest.models.account import Balance, BalanceList, UserInfo  # noqa: TC001
@@ -28,13 +29,12 @@ from buda_client.rest.models.orders import (  # noqa: TC001
     Quotation,
     Trades,
 )
-from buda_client.core.retry import async_retry_on_error
 
 if TYPE_CHECKING:
     from buda_client.core.providers import BudaCredentials
+    from buda_client.core.settings import BudaSettings
     from buda_client.rest.endpoints.base import Endpoint, RequestMethod
     from buda_client.rest.endpoints.orders import QuotationPayload, TradesParams
-    from buda_client.core.settings import BudaSettings
 
 
 T = TypeVar("T", bound=BaseModel)

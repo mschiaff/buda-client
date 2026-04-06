@@ -6,8 +6,8 @@ from httpx import AsyncClient, Client, Request
 
 if TYPE_CHECKING:
     from buda_client.core.providers import BudaCredentials
-    from buda_client.rest.endpoints.base import Endpoint
     from buda_client.core.settings import BudaSettings
+    from buda_client.rest.endpoints.base import Endpoint
 
 
 type HttpxClient = Annotated[
