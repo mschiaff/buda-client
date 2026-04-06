@@ -17,17 +17,10 @@ BaseUrl = Annotated[
 class BudaSettings:
     """Settings for Buda API clients."""
     
+    # REST API Settings
     base_url: BaseUrl = Field(
         default="https://www.buda.com/api/v2",
         description="Base URL for the Buda API",
-    )
-    base_uri: WebsocketUrl = Field(
-        default=WebsocketUrl("wss://realtime.buda.com"),
-        description="Base URI for the Buda WebSocket API",
-    )
-    user_agent: str = Field(
-        default="python-buda-client/0.1.0",
-        description="User agent for the Buda API client",
     )
     timeout: float | int = Field(
         default=10.0,
@@ -35,7 +28,7 @@ class BudaSettings:
         description="Timeout for API requests in seconds",
     )
 
-    # Retry settings (tenacity)
+    # REST API - Retry Settings (tenacity)
     retry_enabled: bool = Field(
         default=True,
         description="Enable automatic retry for 429, 500, and 503 HTTP errors",
@@ -57,7 +50,7 @@ class BudaSettings:
         description="Base for exponential backoff between retries",
     )
 
-    # Rate limit settings
+    # REST API - Rate Limit Settings
     rate_limit_enabled: bool = Field(
         default=True,
         description="Enable proactive rate limiting",
@@ -73,6 +66,34 @@ class BudaSettings:
     rate_limit_unauth_per_minute: int = Field(
         default=120,
         description="Maximum unauthenticated requests per minute (per IP)",
+    )
+
+    # WebSocket API Settings
+    base_uri: WebsocketUrl = Field(
+        default=WebsocketUrl("wss://realtime.buda.com"),
+        description="Base URI for the Buda WebSocket API",
+    )
+    open_timeout: float | None = Field(
+        default=10.0,
+        description="Timeout for opening WebSocket connections in seconds",
+    )
+    ping_interval: float | None = Field(
+        default=10.0,
+        description="Interval for sending WebSocket pings in seconds",
+    )
+    ping_timeout: float | None = Field(
+        default=20.0,
+        description="Timeout for WebSocket pings in seconds",
+    )
+    close_timeout: float | None = Field(
+        default=10.0,
+        description="Timeout for closing WebSocket connections in seconds",
+    )
+
+    # Common Settings
+    user_agent: str = Field(
+        default="python-buda-client/0.1.0",
+        description="User agent for the Buda API client",
     )
 
     @property

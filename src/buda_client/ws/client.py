@@ -63,9 +63,10 @@ class BudaWebSocketClient:
         """Resolve channels and build the full WebSocket URL."""
         if not channels:
             raise ValueError("At least one channel is required.")
+        
         parts = [ch.resolve(self._pubsub_key) for ch in channels]
         joined = ",".join(parts)
-        base = str(self._settings.base_uri)
+        base = self._settings.base_uri.encoded_string()
         url = f"{base}sub?channel={joined}"
         return urllib.parse.quote(url, safe=":/?=,")
 
@@ -91,7 +92,13 @@ class BudaWebSocketClient:
         channel_names = ", ".join(ch.name for ch in channels)
         logger.info("Subscribing to [%s] at %s", channel_names, url)
 
-        async for ws in connect(url, ping_interval=PING_INTERVAL):
+        async for ws in connect(
+            url,
+            ping_interval=self._settings.ping_interval,
+            ping_timeout=self._settings.ping_timeout,
+            close_timeout=self._settings.close_timeout,
+            open_timeout=self._settings.open_timeout,
+        ):
             try:
                 logger.info("Connected to %s", url)
                 async for raw in ws:
