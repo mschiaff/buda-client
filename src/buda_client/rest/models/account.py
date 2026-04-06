@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, RootModel, model_validator
 
-from buda_client.models.common import CurrencyValue  # noqa: TC001
+from buda_client.rest.models.common import CurrencyValue  # noqa: TC001
 
 
 class UserInfo(BaseModel):

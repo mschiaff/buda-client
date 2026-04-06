@@ -4,8 +4,8 @@ from typing import Annotated, NotRequired, TypedDict
 
 from pydantic import Field, TypeAdapter
 
-from buda_client.endpoints.base import Endpoint
-from buda_client.models.orders import (
+from buda_client.rest.endpoints.base import Endpoint
+from buda_client.rest.models.orders import (
     OrderBook,
     OrderCancelAllResponse,
     OrderCancelResponse,

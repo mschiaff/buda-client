@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING, Any
 
 from websockets import ConnectionClosed, connect
 
-from buda_client.ws.channels import Channel
+from buda_client.socket.channels import Channel
 
 if TYPE_CHECKING:
-    from buda_client.settings import BudaSettings
+    from buda_client.core.settings import BudaSettings
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class BudaWebSocketClient:
         pubsub_key: str | None = None,
         settings: BudaSettings | None = None,
     ) -> None:
-        from buda_client.settings import BudaSettings
+        from buda_client.core.settings import BudaSettings
 
         self._pubsub_key: str | None = pubsub_key
         self._settings: BudaSettings = settings or BudaSettings()

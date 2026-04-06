@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING, Annotated, Any
 from httpx import AsyncClient, Client, Request
 
 if TYPE_CHECKING:
-    from buda_client.endpoints.base import Endpoint
-    from buda_client.providers import BudaCredentials
-    from buda_client.settings import BudaSettings
+    from buda_client.core.providers import BudaCredentials
+    from buda_client.rest.endpoints.base import Endpoint
+    from buda_client.core.settings import BudaSettings
 
 
 type HttpxClient = Annotated[
@@ -27,8 +27,8 @@ class BaseClient[T: HttpxClient]:
             settings: BudaSettings | None = None,
             provider: BudaCredentials | None = None,
     ) -> None:
-        from buda_client.auth import BudaAuth
-        from buda_client.settings import BudaSettings
+        from buda_client.core.auth import BudaAuth
+        from buda_client.core.settings import BudaSettings
 
         self._settings: BudaSettings = settings or BudaSettings()
         self._auth: BudaAuth | None = BudaAuth(

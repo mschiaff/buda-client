@@ -5,14 +5,20 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Literal, TypeVar, overload
 from warnings import deprecated
 
-from httpx import Client
+from httpx import AsyncClient
 from pydantic import BaseModel
 
-from buda_client.clients.base import BaseClient
-from buda_client.endpoints import account, markets, orders
-from buda_client.models.account import Balance, BalanceList, UserInfo  # noqa: TC001
-from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList  # noqa: TC001
-from buda_client.models.orders import (  # noqa: TC001
+from buda_client.core.limiter import AsyncRateLimiter
+from buda_client.rest.client.base import BaseClient
+from buda_client.rest.endpoints import account, markets, orders
+from buda_client.rest.models.account import Balance, BalanceList, UserInfo  # noqa: TC001
+from buda_client.rest.models.markets import (  # noqa: TC001
+    Market,
+    MarketList,
+    MarketTicker,
+    TickerList,
+)
+from buda_client.rest.models.orders import (  # noqa: TC001
     OrderBook,
     OrderCancelAllResponse,
     OrderCancelResponse,
@@ -22,27 +28,26 @@ from buda_client.models.orders import (  # noqa: TC001
     Quotation,
     Trades,
 )
-from buda_client.rate_limiter import SyncRateLimiter
-from buda_client.retry import sync_retry_on_error
+from buda_client.core.retry import async_retry_on_error
 
 if TYPE_CHECKING:
-    from buda_client.endpoints.base import Endpoint, RequestMethod
-    from buda_client.endpoints.orders import QuotationPayload, TradesParams
-    from buda_client.providers import BudaCredentials
-    from buda_client.settings import BudaSettings
+    from buda_client.core.providers import BudaCredentials
+    from buda_client.rest.endpoints.base import Endpoint, RequestMethod
+    from buda_client.rest.endpoints.orders import QuotationPayload, TradesParams
+    from buda_client.core.settings import BudaSettings
 
 
 T = TypeVar("T", bound=BaseModel)
 
 
-class PublicAPI:
+class AsyncPublicAPI:
     __slots__ = ("_client",)
 
-    def __init__(self, client: BudaClient):
-        self._client: BudaClient = client
+    def __init__(self, client: AsyncBudaClient):
+        self._client: AsyncBudaClient = client
 
     @overload
-    def markets(
+    async def markets(
             self,
             market_id: str,
             *,
@@ -50,7 +55,7 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> Market: ...
     @overload
-    def markets(
+    async def markets(
             self,
             market_id: None = ...,
             *,
@@ -58,7 +63,7 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> MarketList: ...
     @overload
-    def markets(
+    async def markets(
             self,
             market_id: str | None = None,
             *,
@@ -66,14 +71,14 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> dict[str, Any]: ...
 
-    def markets(
+    async def markets(
             self,
             market_id: str | None = None,
             *,
             raw: bool = False,
             authenticated: bool = False
     ) -> Market | MarketList | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             markets.markets_endpoint(
                 market_id
             ),
@@ -82,7 +87,7 @@ class PublicAPI:
         )
 
     @overload
-    def tickers(
+    async def tickers(
             self,
             market_id: str,
             *,
@@ -90,7 +95,7 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> MarketTicker: ...
     @overload
-    def tickers(
+    async def tickers(
             self,
             market_id: None = ...,
             *,
@@ -98,7 +103,7 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> TickerList: ...
     @overload
-    def tickers(
+    async def tickers(
             self,
             market_id: str | None = None,
             *,
@@ -106,14 +111,14 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> dict[str, Any]: ...
 
-    def tickers(
+    async def tickers(
             self,
             market_id: str | None = None,
             *,
             raw: bool = False,
             authenticated: bool = False
     ) -> MarketTicker | TickerList | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             markets.tickers_endpoint(
                 market_id
             ),
@@ -122,7 +127,7 @@ class PublicAPI:
         )
 
     @overload
-    def order_book(
+    async def order_book(
             self,
             market_id: str,
             *,
@@ -130,7 +135,7 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> OrderBook: ...
     @overload
-    def order_book(
+    async def order_book(
             self,
             market_id: str,
             *,
@@ -138,14 +143,14 @@ class PublicAPI:
             authenticated: bool = ...
     ) -> dict[str, Any]: ...
 
-    def order_book(
+    async def order_book(
             self,
             market_id: str,
             *,
             raw: bool = False,
             authenticated: bool = False
     ) -> OrderBook | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             orders.order_book_endpoint(
                 market_id
             ),
@@ -158,7 +163,7 @@ class PublicAPI:
         "Authenticated trades requests with query params return 401. "
         "Use authenticated=False (default) when passing params."
     )
-    def trades(
+    async def trades(
             self,
             market_id: str,
             *,
@@ -166,13 +171,12 @@ class PublicAPI:
             authenticated: Literal[True],
             raw: Literal[False] = ...,
     ) -> Trades: ...
-
     @overload
     @deprecated(
         "Authenticated trades requests with query params return 401. "
         "Use authenticated=False (default) when passing params."
     )
-    def trades(
+    async def trades(
             self,
             market_id: str,
             *,
@@ -182,7 +186,7 @@ class PublicAPI:
     ) -> dict[str, Any]: ...
 
     @overload
-    def trades(
+    async def trades(
             self,
             market_id: str,
             *,
@@ -191,7 +195,7 @@ class PublicAPI:
             authenticated: bool = ...,
     ) -> Trades: ...
     @overload
-    def trades(
+    async def trades(
             self,
             market_id: str,
             *,
@@ -200,7 +204,7 @@ class PublicAPI:
             authenticated: bool = ...,
     ) -> dict[str, Any]: ...
 
-    def trades(
+    async def trades(
             self,
             market_id: str,
             *,
@@ -208,7 +212,7 @@ class PublicAPI:
             raw: bool = False,
             authenticated: bool = False,
     ) -> Trades | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             orders.trades_endpoint(
                 market_id,
                 params=params
@@ -218,7 +222,7 @@ class PublicAPI:
         )
 
     @overload
-    def quotations(
+    async def quotations(
             self,
             market_id: str,
             *,
@@ -227,7 +231,7 @@ class PublicAPI:
             authenticated: bool = ...,
     ) -> Quotation: ...
     @overload
-    def quotations(
+    async def quotations(
             self,
             market_id: str,
             *,
@@ -236,7 +240,7 @@ class PublicAPI:
             authenticated: bool = ...,
     ) -> dict[str, Any]: ...
 
-    def quotations(
+    async def quotations(
             self,
             market_id: str,
             *,
@@ -244,7 +248,7 @@ class PublicAPI:
             raw: bool = False,
             authenticated: bool = False,
     ) -> Quotation | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             orders.quotation_endpoint(
                 market_id,
                 payload=payload
@@ -254,72 +258,72 @@ class PublicAPI:
         )
 
 
-class PrivateAPI:
+class AsyncPrivateAPI:
     __slots__ = ("_client",)
 
-    def __init__(self, client: BudaClient):
-        self._client: BudaClient = client
+    def __init__(self, client: AsyncBudaClient):
+        self._client: AsyncBudaClient = client
 
     @overload
-    def me(
+    async def me(
             self,
             *,
             raw: Literal[False] = ...
     ) -> UserInfo: ...
     @overload
-    def me(
+    async def me(
             self,
             *,
             raw: Literal[True]
     ) -> dict[str, Any]: ...
 
-    def me(
+    async def me(
             self,
             *,
             raw: bool = False
     ) -> UserInfo | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             account.me_endpoint(),
             raw=raw,
             authenticated=True
         )
     
     @overload
-    def balances(
+    async def balances(
             self,
             currency: str,
             *,
             raw: Literal[False] = ...
     ) -> Balance: ...
     @overload
-    def balances(
+    async def balances(
             self,
             currency: None = ...,
             *,
             raw: Literal[False] = ...
     ) -> BalanceList: ...
     @overload
-    def balances(
+    async def balances(
             self,
             currency: str | None = ...,
             *,
             raw: Literal[True]
     ) -> dict[str, Any]: ...
     
-    def balances(
+    async def balances(
             self,
             currency: str | None = None,
             *,
             raw: bool = False
     ) -> Balance | BalanceList | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             account.balances_endpoint(currency),
             raw=raw,
             authenticated=True
     )
 
     @overload
-    def create_order(
+    async def create_order(
             self,
             market_id: str,
             *,
@@ -327,7 +331,7 @@ class PrivateAPI:
             raw: Literal[False] = ...,
     ) -> OrderCreateResponse: ...
     @overload
-    def create_order(
+    async def create_order(
             self,
             market_id: str,
             *,
@@ -335,14 +339,14 @@ class PrivateAPI:
             raw: Literal[True],
     ) -> dict[str, Any]: ...
 
-    def create_order(
+    async def create_order(
             self,
             market_id: str,
             *,
             payload: OrderCreate,
             raw: bool = False
     ) -> OrderCreateResponse | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             orders.create_order_endpoint(
                 market_id,
                 payload=payload
@@ -352,61 +356,61 @@ class PrivateAPI:
         )
     
     @overload
-    def order_detail(
+    async def order_detail(
             self,
             order_id: int,
             *,
             raw: Literal[False] = ...,
     ) -> OrderDetail: ...
     @overload
-    def order_detail(
+    async def order_detail(
             self,
             order_id: int,
             *,
             raw: Literal[True],
     ) -> dict[str, Any]: ...
 
-    def order_detail(
+    async def order_detail(
             self,
             order_id: int,
             *,
             raw: bool = False
     ) -> OrderDetail | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             orders.order_detail_endpoint(order_id),
             raw=raw,
             authenticated=True
         )
     
     @overload
-    def cancel_order(
+    async def cancel_order(
             self,
             order_id: int,
             *,
             raw: Literal[False] = ...,
     ) -> OrderCancelResponse: ...
     @overload
-    def cancel_order(
+    async def cancel_order(
             self,
             order_id: int,
             *,
             raw: Literal[True],
     ) -> dict[str, Any]: ...
 
-    def cancel_order(
+    async def cancel_order(
             self,
             order_id: int,
             *,
             raw: bool = False
     ) -> OrderCancelResponse | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             orders.cancel_order_endpoint(order_id),
             raw=raw,
             authenticated=True
         )
     
     @overload
-    def cancel_all_orders(
+    async def cancel_all_orders(
             self,
             market_id: str | None = None,
             type: str | None = None,
@@ -414,7 +418,7 @@ class PrivateAPI:
             raw: Literal[False] = ...,
     ) -> OrderCancelAllResponse: ...
     @overload
-    def cancel_all_orders(
+    async def cancel_all_orders(
             self,
             market_id: str | None = None,
             type: str | None = None,
@@ -422,22 +426,22 @@ class PrivateAPI:
             raw: Literal[True],
     ) -> dict[str, Any]: ...
     
-    def cancel_all_orders(
+    async def cancel_all_orders(
             self,
             market_id: str | None = None,
             type: str | None = None,
             *,
             raw: bool = False
     ) -> OrderCancelAllResponse | dict[str, Any]:
-        return self._client._request(
+        return await self._client._request(
             orders.cancel_all_orders_endpoint(market_id, type),
             raw=raw,
             authenticated=True
         )
 
 
-class BudaClient(BaseClient[Client]):
-    """Synchronous client for the Buda API."""
+class AsyncBudaClient(BaseClient[AsyncClient]):
+    """Asynchronous client for the Buda API."""
 
     __slots__ = ("_rate_limiter", "private", "public")
 
@@ -447,22 +451,22 @@ class BudaClient(BaseClient[Client]):
             provider: BudaCredentials | None = None
         ) -> None:
         super().__init__(
-            client=Client,
+            client=AsyncClient,
             settings=settings,
             provider=provider
         )
-        self._rate_limiter = SyncRateLimiter(self._settings)
-        self.public = PublicAPI(self)
-        self.private = PrivateAPI(self)
+        self._rate_limiter = AsyncRateLimiter(self._settings)
+        self.public = AsyncPublicAPI(self)
+        self.private = AsyncPrivateAPI(self)
 
-    def __enter__(self) -> BudaClient:
+    async def __aenter__(self) -> AsyncBudaClient:
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None: # type: ignore
-        self._client.close()
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None: # type: ignore
+        await self._client.aclose()
 
     @overload
-    def _request(
+    async def _request(
             self,
             endpoint: Endpoint[T],
             *,
@@ -470,7 +474,7 @@ class BudaClient(BaseClient[Client]):
             authenticated: bool = ...
     ) -> T: ...
     @overload
-    def _request(
+    async def _request(
             self,
             endpoint: Endpoint[T],
             *,
@@ -478,8 +482,8 @@ class BudaClient(BaseClient[Client]):
             authenticated: bool = ...
     ) -> dict[str, Any]: ...
 
-    @sync_retry_on_error
-    def _request(
+    @async_retry_on_error
+    async def _request(
             self,
             endpoint: Endpoint[T],
             *,
@@ -492,10 +496,10 @@ class BudaClient(BaseClient[Client]):
                 "but no auth credentials were provided."
             )
 
-        self._rate_limiter.acquire(authenticated=authenticated)
+        await self._rate_limiter.acquire(authenticated=authenticated)
 
         request = self._build_request(endpoint)
-        response = self._client.send(
+        response = await self._client.send(
             request,
             auth=self._auth if authenticated else None
         )
@@ -509,8 +513,8 @@ class BudaClient(BaseClient[Client]):
             )
         )
 
-    @sync_retry_on_error
-    def _raw_request(
+    @async_retry_on_error
+    async def _raw_request(
             self,
             method: RequestMethod,
             path: str,
@@ -524,9 +528,9 @@ class BudaClient(BaseClient[Client]):
                 "but no auth credentials were provided."
             )
 
-        self._rate_limiter.acquire(authenticated=authenticated)
+        await self._rate_limiter.acquire(authenticated=authenticated)
 
-        response = self._client.request(
+        response = await self._client.request(
             method,
             path,
             auth=self._auth if authenticated else None,

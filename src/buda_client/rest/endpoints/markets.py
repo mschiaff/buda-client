@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import overload
 
-from buda_client.endpoints.base import Endpoint
-from buda_client.models.markets import Market, MarketList, MarketTicker, TickerList
+from buda_client.rest.endpoints.base import Endpoint
+from buda_client.rest.models.markets import Market, MarketList, MarketTicker, TickerList
 
 
 @overload

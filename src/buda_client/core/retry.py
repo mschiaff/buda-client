@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
     from tenacity.wait import WaitBaseT
 
-    from buda_client.settings import BudaSettings
+    from buda_client.core.settings import BudaSettings
 
 logger = logging.getLogger("buda_client.retry")
 
