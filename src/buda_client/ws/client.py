@@ -17,8 +17,6 @@ logger = logging.getLogger(__name__)
 
 type EventHandler = Callable[[dict[str, Any]], Awaitable[None]]
 
-PING_INTERVAL: int = 10
-
 
 async def default_handler(data: dict[str, Any]) -> None:
     """Print received WebSocket event data."""
