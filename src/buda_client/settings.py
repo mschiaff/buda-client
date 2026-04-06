@@ -35,10 +35,49 @@ class BudaSettings:
         description="Timeout for API requests in seconds",
     )
 
+    # Retry settings (tenacity)
+    retry_enabled: bool = Field(
+        default=True,
+        description="Enable automatic retry for 429, 500, and 503 HTTP errors",
+    )
+    retry_max_attempts: int = Field(
+        default=3,
+        description="Maximum number of retry attempts",
+    )
+    retry_min_wait: float = Field(
+        default=1.0,
+        description="Minimum wait time between retries in seconds",
+    )
+    retry_max_wait: float = Field(
+        default=30.0,
+        description="Maximum wait time between retries in seconds",
+    )
+    retry_exponential_base: float = Field(
+        default=2.0,
+        description="Base for exponential backoff between retries",
+    )
+
+    # Rate limit settings
+    rate_limit_enabled: bool = Field(
+        default=True,
+        description="Enable proactive rate limiting",
+    )
+    rate_limit_per_second: int = Field(
+        default=20,
+        description="Maximum requests per second (shared across auth/unauth)",
+    )
+    rate_limit_auth_per_minute: int = Field(
+        default=375,
+        description="Maximum authenticated requests per minute (per API key)",
+    )
+    rate_limit_unauth_per_minute: int = Field(
+        default=120,
+        description="Maximum unauthenticated requests per minute (per IP)",
+    )
+
     @property
     def headers(self) -> dict[str, str]:
         """Default headers for API requests."""
         return {
-            "Accept": "application/json",
             "User-Agent": self.user_agent,
         }

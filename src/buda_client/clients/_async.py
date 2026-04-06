@@ -22,6 +22,8 @@ from buda_client.models.orders import (  # noqa: TC001
     Quotation,
     Trades,
 )
+from buda_client.rate_limiter import AsyncRateLimiter
+from buda_client.retry import async_retry_on_error
 
 if TYPE_CHECKING:
     from buda_client.endpoints.base import Endpoint, RequestMethod
@@ -436,7 +438,7 @@ class AsyncPrivateAPI:
 class AsyncBudaClient(BaseClient[AsyncClient]):
     """Asynchronous client for the Buda API."""
 
-    __slots__ = ("private", "public")
+    __slots__ = ("_rate_limiter", "private", "public")
 
     def __init__(
             self,
@@ -448,6 +450,7 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
             settings=settings,
             provider=provider
         )
+        self._rate_limiter = AsyncRateLimiter(self._settings)
         self.public = AsyncPublicAPI(self)
         self.private = AsyncPrivateAPI(self)
 
@@ -474,6 +477,7 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
             authenticated: bool = ...
     ) -> dict[str, Any]: ...
 
+    @async_retry_on_error
     async def _request(
             self,
             endpoint: Endpoint[T],
@@ -486,6 +490,8 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
                 "Authentication was requested, "
                 "but no auth credentials were provided."
             )
+
+        await self._rate_limiter.acquire(authenticated=authenticated)
 
         request = self._build_request(endpoint)
         response = await self._client.send(
@@ -502,6 +508,7 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
             )
         )
 
+    @async_retry_on_error
     async def _raw_request(
             self,
             method: RequestMethod,
@@ -515,6 +522,8 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
                 "Authentication was requested, "
                 "but no auth credentials were provided."
             )
+
+        await self._rate_limiter.acquire(authenticated=authenticated)
 
         response = await self._client.request(
             method,

@@ -22,6 +22,8 @@ from buda_client.models.orders import (  # noqa: TC001
     Quotation,
     Trades,
 )
+from buda_client.rate_limiter import SyncRateLimiter
+from buda_client.retry import sync_retry_on_error
 
 if TYPE_CHECKING:
     from buda_client.endpoints.base import Endpoint, RequestMethod
@@ -437,7 +439,7 @@ class PrivateAPI:
 class BudaClient(BaseClient[Client]):
     """Synchronous client for the Buda API."""
 
-    __slots__ = ("private", "public")
+    __slots__ = ("_rate_limiter", "private", "public")
 
     def __init__(
             self,
@@ -449,6 +451,7 @@ class BudaClient(BaseClient[Client]):
             settings=settings,
             provider=provider
         )
+        self._rate_limiter = SyncRateLimiter(self._settings)
         self.public = PublicAPI(self)
         self.private = PrivateAPI(self)
 
@@ -475,6 +478,7 @@ class BudaClient(BaseClient[Client]):
             authenticated: bool = ...
     ) -> dict[str, Any]: ...
 
+    @sync_retry_on_error
     def _request(
             self,
             endpoint: Endpoint[T],
@@ -487,6 +491,8 @@ class BudaClient(BaseClient[Client]):
                 "Authentication was requested, "
                 "but no auth credentials were provided."
             )
+
+        self._rate_limiter.acquire(authenticated=authenticated)
 
         request = self._build_request(endpoint)
         response = self._client.send(
@@ -503,6 +509,7 @@ class BudaClient(BaseClient[Client]):
             )
         )
 
+    @sync_retry_on_error
     def _raw_request(
             self,
             method: RequestMethod,
@@ -516,6 +523,8 @@ class BudaClient(BaseClient[Client]):
                 "Authentication was requested, "
                 "but no auth credentials were provided."
             )
+
+        self._rate_limiter.acquire(authenticated=authenticated)
 
         response = self._client.request(
             method,
