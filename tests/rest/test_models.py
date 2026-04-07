@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from buda.rest.models.account import Balance, BalanceList, UserInfo
-from buda.rest.models.common import CurrencyValue, PriceAmount
+from buda.rest.models.common import CurrencyValue, PriceAmount, PriceAmountList
 from buda.rest.models.markets import Market, MarketList, MarketTicker, Ticker, TickerList
 from buda.rest.models.orders import (
     OrderBook,
@@ -36,6 +36,40 @@ class TestPriceAmount:
         pa = PriceAmount.model_validate(["50000.0", "1.5"])
         assert pa.price == 50000.0
         assert pa.amount == 1.5
+
+
+class TestPriceAmountList:
+    def test_min_by_price(self):
+        pal = PriceAmountList.model_validate(
+            [["50000.0", "1.0"], ["30000.0", "2.0"], ["40000.0", "0.5"]]
+        )
+        result = pal.min()
+        assert result.price == 30000.0
+        assert result.amount == 2.0
+
+    def test_max_by_price(self):
+        pal = PriceAmountList.model_validate(
+            [["50000.0", "1.0"], ["30000.0", "2.0"], ["40000.0", "0.5"]]
+        )
+        result = pal.max()
+        assert result.price == 50000.0
+        assert result.amount == 1.0
+
+    def test_min_by_amount(self):
+        pal = PriceAmountList.model_validate(
+            [["50000.0", "1.0"], ["30000.0", "2.0"], ["40000.0", "0.5"]]
+        )
+        result = pal.min(key="amount")
+        assert result.amount == 0.5
+        assert result.price == 40000.0
+
+    def test_max_by_amount(self):
+        pal = PriceAmountList.model_validate(
+            [["50000.0", "1.0"], ["30000.0", "2.0"], ["40000.0", "0.5"]]
+        )
+        result = pal.max(key="amount")
+        assert result.amount == 2.0
+        assert result.price == 30000.0
 
 
 # ── Market Models ──────────────────────────────────────────────────
