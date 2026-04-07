@@ -19,7 +19,7 @@ from buda.core.settings import BudaSettings
 
 
 def _make_http_status_error(
-        status_code: int, headers: dict[str, str] | None = None
+    status_code: int, headers: dict[str, str] | None = None
 ) -> httpx.HTTPStatusError:
     request = httpx.Request("GET", "https://test.com")
     response = httpx.Response(status_code, request=request, headers=headers or {})

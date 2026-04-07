@@ -17,7 +17,10 @@ if TYPE_CHECKING:
 class BudaAuth(httpx.Auth):
     """Attach Buda HMAC authentication to the Request object."""
 
-    __slots__ = ("api_key", "api_secret",)
+    __slots__ = (
+        "api_key",
+        "api_secret",
+    )
 
     def __init__(self, api_key: str, api_secret: str):
         self.api_key = api_key
@@ -29,33 +32,24 @@ class BudaAuth(httpx.Auth):
 
     def sign(self, request: httpx.Request, nonce: str) -> str:
         """Create the HMAC signature for the request."""
-        components = [
-            request.method,
-            request.url.path
-        ]
-        
+        components = [request.method, request.url.path]
+
         if request.content:
-            body = base64.b64encode(
-                request.content
-            ).decode()
+            body = base64.b64encode(request.content).decode()
             components.append(body)
         components.append(nonce)
-        message = ' '.join(components)
-        
-        hash = hmac.new(
-            key=self.api_secret.encode(),
-            msg=message.encode(),
-            digestmod='sha384'
-        )
-        
+        message = " ".join(components)
+
+        hash = hmac.new(key=self.api_secret.encode(), msg=message.encode(), digestmod="sha384")
+
         return hash.hexdigest()
 
     def auth_flow(self, request: Request) -> Generator[Request, Response]:
         nonce = self.get_nonce()
         signature = self.sign(request, nonce)
-        
-        request.headers['X-SBTC-APIKEY'] = self.api_key
-        request.headers['X-SBTC-SIGNATURE'] = signature
-        request.headers['X-SBTC-NONCE'] = nonce
-        
+
+        request.headers["X-SBTC-APIKEY"] = self.api_key
+        request.headers["X-SBTC-SIGNATURE"] = signature
+        request.headers["X-SBTC-NONCE"] = nonce
+
         yield request

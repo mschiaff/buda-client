@@ -60,34 +60,35 @@ class TestSubscribe:
         handler = AsyncMock()
 
         mock_ws = AsyncMock()
-        mock_ws.__aiter__ = lambda self: self # type: ignore
+        mock_ws.__aiter__ = lambda self: self  # type: ignore
         messages = [json.dumps({"ev": "book-changed", "data": "test"})]
         mock_ws.__anext__ = AsyncMock(side_effect=[messages[0], StopAsyncIteration])
 
         mock_connect = MagicMock()
-        mock_connect.__aiter__ = lambda self: iter([mock_ws]) # type: ignore
+        mock_connect.__aiter__ = lambda self: iter([mock_ws])  # type: ignore
 
         with patch("buda.socket.client.connect", return_value=mock_connect):
             # Run subscribe but break after first ws connection
-            mock_ws.__aiter__ = lambda self: self # type: ignore
+            mock_ws.__aiter__ = lambda self: self  # type: ignore
             raw_messages = [json.dumps({"ev": "book-changed", "data": "test"})]
 
             async def async_iter_messages():
                 for msg in raw_messages:
                     yield msg
 
-            mock_ws.__aiter__ = lambda _: async_iter_messages() # type: ignore
+            mock_ws.__aiter__ = lambda _: async_iter_messages()  # type: ignore
 
             async def connect_iter():
                 yield mock_ws
                 return
 
             mock_connect_ctx = MagicMock()
-            mock_connect_ctx.__aiter__ = lambda _: connect_iter() # type: ignore
+            mock_connect_ctx.__aiter__ = lambda _: connect_iter()  # type: ignore
 
             with patch("buda.socket.client.connect", return_value=mock_connect_ctx):
                 # We need to cancel the infinite subscribe loop
                 import asyncio
+
                 task = asyncio.create_task(
                     client.subscribe(Channel.book("btcclp"), handler=handler)
                 )
@@ -112,16 +113,17 @@ class TestSubscribe:
                 yield msg
 
         mock_ws = AsyncMock()
-        mock_ws.__aiter__ = lambda _: async_iter_messages() # type: ignore
+        mock_ws.__aiter__ = lambda _: async_iter_messages()  # type: ignore
 
         async def connect_iter():
             yield mock_ws
 
         mock_connect_ctx = MagicMock()
-        mock_connect_ctx.__aiter__ = lambda _: connect_iter() # type: ignore
+        mock_connect_ctx.__aiter__ = lambda _: connect_iter()  # type: ignore
 
         with patch("buda.socket.client.connect", return_value=mock_connect_ctx):
             import asyncio
+
             task = asyncio.create_task(
                 client.subscribe(
                     Channel.book("btcclp"),
@@ -143,6 +145,7 @@ class TestSubscribe:
 class TestDefaultHandler:
     async def test_default_handler_prints(self, capsys: CaptureFixture[str]):
         from buda.socket.client import default_handler
+
         await default_handler({"ev": "test", "value": 42})
         captured = capsys.readouterr()
         assert "test" in captured.out
@@ -169,9 +172,8 @@ class TestSubscribeEdgeCases:
 
         with patch("buda.socket.client.connect", return_value=mock_connect_ctx):
             import asyncio
-            task = asyncio.create_task(
-                client.subscribe(Channel.book("btcclp"), handler=handler)
-            )
+
+            task = asyncio.create_task(client.subscribe(Channel.book("btcclp"), handler=handler))
             await asyncio.sleep(0.1)
             task.cancel()
             with suppress(asyncio.CancelledError):
@@ -211,9 +213,8 @@ class TestSubscribeEdgeCases:
 
         with patch("buda.socket.client.connect", return_value=mock_connect_ctx):
             import asyncio
-            task = asyncio.create_task(
-                client.subscribe(Channel.book("btcclp"), handler=handler)
-            )
+
+            task = asyncio.create_task(client.subscribe(Channel.book("btcclp"), handler=handler))
             await asyncio.sleep(0.2)
             task.cancel()
             with suppress(asyncio.CancelledError):

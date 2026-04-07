@@ -29,10 +29,7 @@ RETRYABLE_STATUS_CODES: frozenset[int] = frozenset({429, 500, 503})
 
 def is_retryable_error(exc: BaseException) -> bool:
     """Return ``True`` if *exc* is an HTTP error with a retryable status code."""
-    return (
-        isinstance(exc, HTTPStatusError)
-        and exc.response.status_code in RETRYABLE_STATUS_CODES
-    )
+    return isinstance(exc, HTTPStatusError) and exc.response.status_code in RETRYABLE_STATUS_CODES
 
 
 class _RetryAfterWait:

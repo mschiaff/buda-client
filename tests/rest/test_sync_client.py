@@ -44,6 +44,7 @@ class TestBudaClientRequest:
     def test_request_raises_without_credentials(self):
         client = BudaClient(settings=FAST_SETTINGS)
         from buda.rest.endpoints.account import me_endpoint
+
         with pytest.raises(ValueError, match="no auth credentials"):
             client._request(me_endpoint(), authenticated=True)
 
@@ -52,6 +53,7 @@ class TestBudaClientRequest:
         response = make_mock_response({"markets": [MARKET_RAW]})
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.endpoints.markets import markets_endpoint
+
             result = client._request(markets_endpoint(None))
             assert isinstance(result, MarketList)
 
@@ -61,6 +63,7 @@ class TestBudaClientRequest:
         response = make_mock_response(raw_data)
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.endpoints.markets import markets_endpoint
+
             result = client._request(markets_endpoint(None), raw=True)
             assert isinstance(result, dict)
             assert "markets" in result
@@ -70,6 +73,7 @@ class TestBudaClientRequest:
         response = make_mock_response(USER_INFO_RAW)
         with patch.object(client._client, "send", return_value=response) as mock_send:
             from buda.rest.endpoints.account import me_endpoint
+
             result = client._request(me_endpoint(), authenticated=True)  # type: ignore # noqa: F841
             # Verify auth was passed
             _, kwargs = mock_send.call_args
@@ -138,6 +142,7 @@ class TestPublicAPI:
         with patch.object(client._client, "send", return_value=response):
             result = client.public.tickers()
             from buda.rest.models.markets import TickerList
+
             assert isinstance(result, TickerList)
 
     def test_tickers_single(self):
@@ -157,6 +162,7 @@ class TestPublicAPI:
         response = make_mock_response(ticker_data)
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.markets import MarketTicker
+
             result = client.public.tickers("btc-clp")
             assert isinstance(result, MarketTicker)
 
@@ -172,6 +178,7 @@ class TestPublicAPI:
         response = make_mock_response(data)
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.orders import OrderBook
+
             result = client.public.order_book("btc-clp")
             assert isinstance(result, OrderBook)
 
@@ -188,6 +195,7 @@ class TestPublicAPI:
         response = make_mock_response(data)
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.orders import Trades
+
             result = client.public.trades("btc-clp")
             assert isinstance(result, Trades)
 
@@ -210,6 +218,7 @@ class TestPublicAPI:
         response = make_mock_response(data)
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.orders import Quotation
+
             result = client.public.quotations(
                 "btc-clp",
                 payload={"type": "bid_given_size", "amount": 0.5},
@@ -226,6 +235,7 @@ class TestPrivateAPI:
         response = make_mock_response(USER_INFO_RAW)
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.account import UserInfo
+
             result = client.private.me()
             assert isinstance(result, UserInfo)
 
@@ -234,6 +244,7 @@ class TestPrivateAPI:
         response = make_mock_response({"balances": [BALANCE_RAW]})
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.account import BalanceList
+
             result = client.private.balances()
             assert isinstance(result, BalanceList)
 
@@ -242,6 +253,7 @@ class TestPrivateAPI:
         response = make_mock_response({"balance": BALANCE_RAW})
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.account import Balance
+
             result = client.private.balances("BTC")
             assert isinstance(result, Balance)
 
@@ -250,6 +262,7 @@ class TestPrivateAPI:
         response = make_mock_response({"order": ORDER_RESPONSE_RAW})
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.orders import OrderCreateResponse
+
             payload = OrderCreate(type="Bid", price_type="market", amount=0.5)
             result = client.private.create_order("btc-clp", payload=payload)
             assert isinstance(result, OrderCreateResponse)
@@ -259,6 +272,7 @@ class TestPrivateAPI:
         response = make_mock_response({"order": ORDER_RESPONSE_RAW})
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.orders import OrderDetail
+
             result = client.private.order_detail(12345)
             assert isinstance(result, OrderDetail)
 
@@ -267,6 +281,7 @@ class TestPrivateAPI:
         response = make_mock_response({"order": ORDER_RESPONSE_RAW})
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.orders import OrderCancelResponse
+
             result = client.private.cancel_order(12345)
             assert isinstance(result, OrderCancelResponse)
 
@@ -275,5 +290,6 @@ class TestPrivateAPI:
         response = make_mock_response({"orders": [ORDER_RESPONSE_RAW]})
         with patch.object(client._client, "send", return_value=response):
             from buda.rest.models.orders import OrderCancelAllResponse
+
             result = client.private.cancel_all_orders()
             assert isinstance(result, OrderCancelAllResponse)

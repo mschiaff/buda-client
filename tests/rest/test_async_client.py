@@ -44,6 +44,7 @@ class TestAsyncBudaClientRequest:
     async def test_request_raises_without_credentials(self):
         client = AsyncBudaClient(settings=FAST_SETTINGS)
         from buda.rest.endpoints.account import me_endpoint
+
         with pytest.raises(ValueError, match="no auth credentials"):
             await client._request(me_endpoint(), authenticated=True)
 
@@ -52,6 +53,7 @@ class TestAsyncBudaClientRequest:
         response = make_mock_response({"markets": [MARKET_RAW]})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.endpoints.markets import markets_endpoint
+
             result = await client._request(markets_endpoint(None))
             assert isinstance(result, MarketList)
 
@@ -61,6 +63,7 @@ class TestAsyncBudaClientRequest:
         response = make_mock_response(raw_data)
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.endpoints.markets import markets_endpoint
+
             result = await client._request(markets_endpoint(None), raw=True)
             assert isinstance(result, dict)
 
@@ -68,9 +71,10 @@ class TestAsyncBudaClientRequest:
         client = AsyncBudaClient(settings=FAST_SETTINGS, provider=CREDS)
         response = make_mock_response(USER_INFO_RAW)
         with patch.object(
-                client._client, "send", new_callable=AsyncMock, return_value=response
+            client._client, "send", new_callable=AsyncMock, return_value=response
         ) as mock_send:
             from buda.rest.endpoints.account import me_endpoint
+
             await client._request(me_endpoint(), authenticated=True)
             _, kwargs = mock_send.call_args
             assert kwargs.get("auth") is not None
@@ -89,7 +93,7 @@ class TestAsyncRawRequest:
         client = AsyncBudaClient(settings=FAST_SETTINGS, provider=CREDS)
         response = make_mock_response(USER_INFO_RAW)
         with patch.object(
-                client._client, "request", new_callable=AsyncMock, return_value=response
+            client._client, "request", new_callable=AsyncMock, return_value=response
         ) as mock_req:
             result = await client._raw_request("GET", "/me", authenticated=True)
             assert "user" in result
@@ -131,6 +135,7 @@ class TestAsyncPublicAPI:
         response = make_mock_response({"tickers": [ticker_data]})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.markets import TickerList
+
             result = await client.public.tickers()
             assert isinstance(result, TickerList)
 
@@ -146,6 +151,7 @@ class TestAsyncPublicAPI:
         response = make_mock_response(data)
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.orders import OrderBook
+
             result = await client.public.order_book("btc-clp")
             assert isinstance(result, OrderBook)
 
@@ -162,6 +168,7 @@ class TestAsyncPublicAPI:
         response = make_mock_response(data)
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.orders import Trades
+
             result = await client.public.trades("btc-clp")
             assert isinstance(result, Trades)
 
@@ -184,6 +191,7 @@ class TestAsyncPublicAPI:
         response = make_mock_response(data)
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.orders import Quotation
+
             result = await client.public.quotations(
                 "btc-clp",
                 payload={"type": "bid_given_size", "amount": 0.5},
@@ -200,6 +208,7 @@ class TestAsyncPrivateAPI:
         response = make_mock_response(USER_INFO_RAW)
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.account import UserInfo
+
             result = await client.private.me()
             assert isinstance(result, UserInfo)
 
@@ -208,6 +217,7 @@ class TestAsyncPrivateAPI:
         response = make_mock_response({"balances": [BALANCE_RAW]})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.account import BalanceList
+
             result = await client.private.balances()
             assert isinstance(result, BalanceList)
 
@@ -216,6 +226,7 @@ class TestAsyncPrivateAPI:
         response = make_mock_response({"balance": BALANCE_RAW})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.account import Balance
+
             result = await client.private.balances("BTC")
             assert isinstance(result, Balance)
 
@@ -224,6 +235,7 @@ class TestAsyncPrivateAPI:
         response = make_mock_response({"order": ORDER_RESPONSE_RAW})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.orders import OrderCreateResponse
+
             payload = OrderCreate(type="Bid", price_type="market", amount=0.5)
             result = await client.private.create_order("btc-clp", payload=payload)
             assert isinstance(result, OrderCreateResponse)
@@ -233,6 +245,7 @@ class TestAsyncPrivateAPI:
         response = make_mock_response({"order": ORDER_RESPONSE_RAW})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.orders import OrderDetail
+
             result = await client.private.order_detail(12345)
             assert isinstance(result, OrderDetail)
 
@@ -241,6 +254,7 @@ class TestAsyncPrivateAPI:
         response = make_mock_response({"order": ORDER_RESPONSE_RAW})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.orders import OrderCancelResponse
+
             result = await client.private.cancel_order(12345)
             assert isinstance(result, OrderCancelResponse)
 
@@ -249,5 +263,6 @@ class TestAsyncPrivateAPI:
         response = make_mock_response({"orders": [ORDER_RESPONSE_RAW]})
         with patch.object(client._client, "send", new_callable=AsyncMock, return_value=response):
             from buda.rest.models.orders import OrderCancelAllResponse
+
             result = await client.private.cancel_all_orders()
             assert isinstance(result, OrderCancelAllResponse)

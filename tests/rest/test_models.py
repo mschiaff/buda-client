@@ -18,6 +18,7 @@ from tests.conftest import MARKET_RAW, ORDER_RESPONSE_RAW
 
 # ── Common Models ──────────────────────────────────────────────────
 
+
 class TestCurrencyValue:
     def test_parse_from_list(self):
         cv = CurrencyValue.model_validate(["100.5", "BTC"])
@@ -38,6 +39,7 @@ class TestPriceAmount:
 
 
 # ── Market Models ──────────────────────────────────────────────────
+
 
 class TestMarket:
     def test_unwrap_from_market_key(self):
@@ -241,6 +243,7 @@ class TestBalanceList:
 
 # ── Order Models ───────────────────────────────────────────────────
 
+
 class TestOrderBook:
     def test_unwrap_from_order_book_key(self):
         data = {
@@ -326,7 +329,7 @@ class TestOrderCreate:
             limit={"price": 50000.0, "type": "gtc"},
         )
         assert oc.limit is not None
-        assert oc.limit["price"] == 50000.0 # type: ignore
+        assert oc.limit["price"] == 50000.0  # type: ignore
 
     def test_model_dump_excludes_none(self):
         oc = OrderCreate(type="Bid", price_type="market", amount=0.5)

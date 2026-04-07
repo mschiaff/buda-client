@@ -29,6 +29,9 @@ cd buda-client
 
 # Install all dependencies (including dev tools)
 uv sync --group dev
+
+# Set up pre-commit hooks (runs ruff automatically on each commit)
+uv run pre-commit install
 ```
 
 ### Running Checks
@@ -47,6 +50,12 @@ uv run pytest
 # Tests with coverage report
 uv run coverage run --source=src/buda -m pytest
 uv run coverage report -m
+```
+
+If you installed the pre-commit hooks, ruff will run automatically on each commit. You can also run all hooks manually:
+
+```bash
+uv run pre-commit run --all-files
 ```
 
 Please make sure all checks pass before submitting a pull request.

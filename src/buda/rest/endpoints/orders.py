@@ -34,16 +34,12 @@ QuotationPayloadAdapter = TypeAdapter(QuotationPayload)
 
 
 def order_book_endpoint(market_id: str) -> Endpoint[OrderBook]:
-    return Endpoint(
-        model=OrderBook, method="GET", path=f"/markets/{market_id}/order_book"
-    )
+    return Endpoint(model=OrderBook, method="GET", path=f"/markets/{market_id}/order_book")
 
 
 def trades_endpoint(market_id: str, *, params: TradesParams | None = None) -> Endpoint[Trades]:
     params = TradesParamsAdapter.validate_python(params) if params else {}
-    return Endpoint(
-        model=Trades, method="GET", path=f"/markets/{market_id}/trades", params=params
-    )
+    return Endpoint(model=Trades, method="GET", path=f"/markets/{market_id}/trades", params=params)
 
 
 def quotation_endpoint(market_id: str, *, payload: QuotationPayload) -> Endpoint[Quotation]:
@@ -52,19 +48,18 @@ def quotation_endpoint(market_id: str, *, payload: QuotationPayload) -> Endpoint
         model=Quotation, method="POST", path=f"/markets/{market_id}/quotations", json=payload
     )
 
+
 def create_order_endpoint(market_id: str, *, payload: OrderCreate) -> Endpoint[OrderCreateResponse]:
     return Endpoint(
         model=OrderCreateResponse,
         method="POST",
         path=f"/markets/{market_id}/orders",
-        json=payload.model_dump(exclude_none=True)
+        json=payload.model_dump(exclude_none=True),
     )
 
 
 def order_detail_endpoint(order_id: int) -> Endpoint[OrderDetail]:
-    return Endpoint(
-        model=OrderDetail, method="GET", path=f"/orders/{order_id}"
-    )
+    return Endpoint(model=OrderDetail, method="GET", path=f"/orders/{order_id}")
 
 
 def cancel_order_endpoint(order_id: int) -> Endpoint[OrderCancelResponse]:
@@ -72,19 +67,16 @@ def cancel_order_endpoint(order_id: int) -> Endpoint[OrderCancelResponse]:
         model=OrderCancelResponse,
         method="PUT",
         path=f"/orders/{order_id}",
-        json={"state": "canceling"}
+        json={"state": "canceling"},
     )
 
+
 def cancel_all_orders_endpoint(
-        market_id: str | None = None,
-        type: str | None = None
+    market_id: str | None = None, type: str | None = None
 ) -> Endpoint[OrderCancelAllResponse]:
     return Endpoint(
         model=OrderCancelAllResponse,
         method="DELETE",
         path="/orders",
-        json={
-            "market_id": market_id,
-            "type": type
-        }
+        json={"market_id": market_id, "type": type},
     )

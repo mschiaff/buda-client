@@ -5,18 +5,13 @@ from typing import Annotated
 from pydantic import BeforeValidator, Field, HttpUrl, WebsocketUrl
 from pydantic.dataclasses import dataclass
 
-BaseUrl = Annotated[
-    str, 
-    BeforeValidator(
-        lambda v: HttpUrl(v).encoded_string()
-    )
-]
+BaseUrl = Annotated[str, BeforeValidator(lambda v: HttpUrl(v).encoded_string())]
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
 class BudaSettings:
     """Settings for Buda API clients."""
-    
+
     # REST API Settings
     base_url: BaseUrl = Field(
         default="https://www.buda.com/api/v2",

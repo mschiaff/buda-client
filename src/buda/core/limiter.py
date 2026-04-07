@@ -79,8 +79,7 @@ class SyncRateLimiter:
 
                 if wait > 0:
                     logger.warning(
-                        "Rate limit approaching — sleeping %.2fs before request "
-                        "(authenticated=%s)",
+                        "Rate limit approaching — sleeping %.2fs before request (authenticated=%s)",
                         wait,
                         authenticated,
                     )
@@ -162,8 +161,7 @@ class AsyncRateLimiter:
 
                 if wait > 0:
                     logger.warning(
-                        "Rate limit approaching — sleeping %.2fs before request "
-                        "(authenticated=%s)",
+                        "Rate limit approaching — sleeping %.2fs before request (authenticated=%s)",
                         wait,
                         authenticated,
                     )

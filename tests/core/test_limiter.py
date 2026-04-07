@@ -10,6 +10,7 @@ from buda.core.settings import BudaSettings
 
 # ── Sync Rate Limiter ──────────────────────────────────────────────
 
+
 class TestSyncRateLimiterDisabled:
     def test_acquire_returns_immediately_when_disabled(self):
         settings = BudaSettings(rate_limit_enabled=False)
@@ -112,6 +113,7 @@ class TestSyncRateLimiterAcquire:
 
 
 # ── Async Rate Limiter ─────────────────────────────────────────────
+
 
 class TestAsyncRateLimiterDisabled:
     async def test_acquire_returns_immediately_when_disabled(self):

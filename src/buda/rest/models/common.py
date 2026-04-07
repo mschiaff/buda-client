@@ -11,10 +11,7 @@ class CurrencyValue(BaseModel):
     @classmethod
     def parse_list(cls, data: list[str]) -> dict[str, str]:
         value, currency = data
-        return dict(
-            value=value,
-            currency=currency
-        )
+        return dict(value=value, currency=currency)
 
 
 class PriceAmount(BaseModel):
@@ -25,7 +22,4 @@ class PriceAmount(BaseModel):
     @classmethod
     def parse_list(cls, data: list[str]) -> dict[str, str]:
         price, amount = data
-        return dict(
-            price=price,
-            amount=amount
-        )
+        return dict(price=price, amount=amount)

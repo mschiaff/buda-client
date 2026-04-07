@@ -15,6 +15,7 @@ def balances_endpoint(currency: str) -> Endpoint[Balance]: ...
 @overload
 def balances_endpoint(currency: None = ...) -> Endpoint[BalanceList]: ...
 
+
 def balances_endpoint(currency: str | None = None) -> Endpoint[Balance] | Endpoint[BalanceList]:
     if currency:
         return Endpoint(model=Balance, method="GET", path=f"/balances/{currency}")

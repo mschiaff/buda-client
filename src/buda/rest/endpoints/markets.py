@@ -11,6 +11,7 @@ def markets_endpoint(market_id: str) -> Endpoint[Market]: ...
 @overload
 def markets_endpoint(market_id: None = ...) -> Endpoint[MarketList]: ...
 
+
 def markets_endpoint(market_id: str | None = None) -> Endpoint[Market] | Endpoint[MarketList]:
     if market_id:
         return Endpoint(model=Market, method="GET", path=f"/markets/{market_id}")
@@ -21,6 +22,7 @@ def markets_endpoint(market_id: str | None = None) -> Endpoint[Market] | Endpoin
 def tickers_endpoint(market_id: str) -> Endpoint[MarketTicker]: ...
 @overload
 def tickers_endpoint(market_id: None = ...) -> Endpoint[TickerList]: ...
+
 
 def tickers_endpoint(market_id: str | None = None) -> Endpoint[MarketTicker] | Endpoint[TickerList]:
     if market_id:

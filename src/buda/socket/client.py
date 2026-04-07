@@ -61,7 +61,7 @@ class BudaWebSocketClient:
         """Resolve channels and build the full WebSocket URL."""
         if not channels:
             raise ValueError("At least one channel is required.")
-        
+
         parts = [ch.resolve(self._pubsub_key) for ch in channels]
         joined = ",".join(parts)
         base = self._settings.base_uri.encoded_string()

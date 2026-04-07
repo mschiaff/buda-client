@@ -24,13 +24,15 @@ class StaticCredentials(BudaCredentials):
     """Provider that uses static credentials."""
 
     def __init__(self, *, api_key: str, api_secret: str) -> None:
-        super().__init__(buda_api_key=api_key, buda_api_secret=api_secret) # type: ignore
+        super().__init__(buda_api_key=api_key, buda_api_secret=api_secret)  # type: ignore
 
 
 class EnvCredentials(BudaCredentials):
     """Provider that loads credentials from environment variables."""
 
-    model_config = SettingsConfigDict(env_prefix="BUDA_",)
+    model_config = SettingsConfigDict(
+        env_prefix="BUDA_",
+    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -42,15 +44,15 @@ class DotEnvCredentials(BudaCredentials):
     model_config = SettingsConfigDict(env_file=".env")
 
     def __init__(self, env_file: str = ".env", **kwargs: Any) -> None:
-        super().__init__(_env_file=env_file, **kwargs) # type: ignore
-    
+        super().__init__(_env_file=env_file, **kwargs)  # type: ignore
+
     @classmethod
     def settings_customise_sources(
-            cls,
-            settings_cls: type[BaseSettings],
-            init_settings: PydanticBaseSettingsSource,
-            env_settings: PydanticBaseSettingsSource,
-            dotenv_settings: PydanticBaseSettingsSource,
-            file_secret_settings: PydanticBaseSettingsSource
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
     ) -> tuple[PydanticBaseSettingsSource, ...]:
         return (dotenv_settings,)

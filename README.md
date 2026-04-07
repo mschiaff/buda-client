@@ -3,10 +3,16 @@
 <h3 align="center">A typed Python client for the Buda.com REST and WebSocket APIs — sync and async.</h3>
 
 <p align="center">
+  <a href="https://github.com/mschiaff/buda-client/actions/workflows/ci.yml">
+    <img src="https://github.com/mschiaff/buda-client/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://codecov.io/gh/mschiaff/buda-client">
+    <img src="https://codecov.io/gh/mschiaff/buda-client/graph/badge.svg" alt="Coverage">
+  </a>
   <a href="https://github.com/mschiaff/buda-client/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/mschiaff/buda-client" alt="License">
   </a>
-  <img src="https://img.shields.io/badge/python-3.13-blue" alt="Python 3.13">
+  <img src="https://img.shields.io/badge/python-3.12%20|%203.13%20|%203.14-blue" alt="Python 3.12 | 3.13 | 3.14">
   <img src="https://img.shields.io/badge/status-alpha-orange" alt="Alpha">
 </p>
 
@@ -45,7 +51,7 @@ or with pip:
 pip install git+https://github.com/mschiaff/buda-client.git
 ```
 
-**Requirements:** Python 3.13
+**Requirements:** Python 3.12+
 
 ## Quick Start
 

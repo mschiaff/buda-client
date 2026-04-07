@@ -26,6 +26,7 @@ from buda.rest.models.orders import (
 
 # ── Market Endpoints ───────────────────────────────────────────────
 
+
 class TestMarketsEndpoint:
     def test_all_markets(self):
         ep = markets_endpoint(None)
@@ -56,6 +57,7 @@ class TestTickersEndpoint:
 
 # ── Account Endpoints ──────────────────────────────────────────────
 
+
 class TestMeEndpoint:
     def test_me(self):
         ep = me_endpoint()
@@ -79,6 +81,7 @@ class TestBalancesEndpoint:
 
 
 # ── Order Endpoints ────────────────────────────────────────────────
+
 
 class TestOrderBookEndpoint:
     def test_order_book(self):
@@ -169,6 +172,7 @@ class TestCancelAllOrdersEndpoint:
 
 
 # ── Endpoint parse_params ──────────────────────────────────────────
+
 
 class TestEndpointParseParams:
     def test_strips_none_values(self):

@@ -7,35 +7,25 @@ from pydantic import BaseModel, Field, RootModel, model_validator
 from buda.rest.models.common import CurrencyValue, PriceAmount  # noqa: TC001
 
 type QuotationType = Literal[
-    "bid_given_size", "bid_given_earned_base",
-    "bid_given_value", "bid_given_spent_quote",
-    "ask_given_size", "ask_given_spent_base",
-    "ask_given_value", "ask_given_earned_quote"
+    "bid_given_size",
+    "bid_given_earned_base",
+    "bid_given_value",
+    "bid_given_spent_quote",
+    "ask_given_size",
+    "ask_given_spent_base",
+    "ask_given_value",
+    "ask_given_earned_quote",
 ]
 
 
 class LimitOrder(TypedDict, total=False):
     price: Annotated[float, ...]
-    type: NotRequired[
-        Annotated[
-            Literal[
-                "gtc", "ioc", "fok",
-                "post_only", "gtd"
-            ],
-        ...]
-    ]
+    type: NotRequired[Annotated[Literal["gtc", "ioc", "fok", "post_only", "gtd"], ...]]
 
 
 class StopOrder(TypedDict, total=False):
     price: Annotated[float, ...]
-    type: NotRequired[
-        Annotated[
-            Literal[
-                "stop_loss",
-                "take_profit"
-            ],
-        ...]
-    ]
+    type: NotRequired[Annotated[Literal["stop_loss", "take_profit"], ...]]
 
 
 class OrderBook(BaseModel):
