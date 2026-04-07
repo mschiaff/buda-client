@@ -1,7 +1,7 @@
 [project]
 name = "buda"
 version = "0.1.0"
-description = "Buda.com API client with support for both REST and WebSocket APIs."
+description = "Buda.com API client for REST and WebSocket APIs with sync and async support."
 readme = "README.md"
 authors = [
     { name = "Matías Schiaffino Tyrer", email = "matias.scht@gmail.com" }
