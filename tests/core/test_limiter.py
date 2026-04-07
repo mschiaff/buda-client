@@ -80,6 +80,36 @@ class TestSyncRateLimiterAcquire:
             limiter.acquire(authenticated=False)
             mock_sleep.assert_called_once()
 
+    def test_acquire_sleeps_when_auth_per_minute_exceeded(self):
+        settings = BudaSettings(rate_limit_per_second=100, rate_limit_auth_per_minute=2)
+        limiter = SyncRateLimiter(settings)
+
+        now = 100.0
+        limiter._per_second = deque()
+        limiter._per_minute_auth = deque([now, now])
+
+        with (
+            patch("buda.core.limiter.time.monotonic", side_effect=[now, now + 61.0]),
+            patch("buda.core.limiter.time.sleep") as mock_sleep,
+        ):
+            limiter.acquire(authenticated=True)
+            mock_sleep.assert_called_once()
+
+    def test_acquire_sleeps_when_unauth_per_minute_exceeded(self):
+        settings = BudaSettings(rate_limit_per_second=100, rate_limit_unauth_per_minute=2)
+        limiter = SyncRateLimiter(settings)
+
+        now = 100.0
+        limiter._per_second = deque()
+        limiter._per_minute_unauth = deque([now, now])
+
+        with (
+            patch("buda.core.limiter.time.monotonic", side_effect=[now, now + 61.0]),
+            patch("buda.core.limiter.time.sleep") as mock_sleep,
+        ):
+            limiter.acquire(authenticated=False)
+            mock_sleep.assert_called_once()
+
 
 # ── Async Rate Limiter ─────────────────────────────────────────────
 
@@ -123,6 +153,36 @@ class TestAsyncRateLimiterAcquire:
 
         with (
             patch("buda.core.limiter.time.monotonic", side_effect=[now, now + 1.1]),
+            patch("buda.core.limiter.asyncio.sleep", new_callable=AsyncMock) as mock_sleep,
+        ):
+            await limiter.acquire(authenticated=False)
+            mock_sleep.assert_called_once()
+
+    async def test_acquire_sleeps_when_auth_per_minute_exceeded(self):
+        settings = BudaSettings(rate_limit_per_second=100, rate_limit_auth_per_minute=2)
+        limiter = AsyncRateLimiter(settings)
+
+        now = 100.0
+        limiter._per_second = deque()
+        limiter._per_minute_auth = deque([now, now])
+
+        with (
+            patch("buda.core.limiter.time.monotonic", side_effect=[now, now + 61.0]),
+            patch("buda.core.limiter.asyncio.sleep", new_callable=AsyncMock) as mock_sleep,
+        ):
+            await limiter.acquire(authenticated=True)
+            mock_sleep.assert_called_once()
+
+    async def test_acquire_sleeps_when_unauth_per_minute_exceeded(self):
+        settings = BudaSettings(rate_limit_per_second=100, rate_limit_unauth_per_minute=2)
+        limiter = AsyncRateLimiter(settings)
+
+        now = 100.0
+        limiter._per_second = deque()
+        limiter._per_minute_unauth = deque([now, now])
+
+        with (
+            patch("buda.core.limiter.time.monotonic", side_effect=[now, now + 61.0]),
             patch("buda.core.limiter.asyncio.sleep", new_callable=AsyncMock) as mock_sleep,
         ):
             await limiter.acquire(authenticated=False)
