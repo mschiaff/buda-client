@@ -20,9 +20,9 @@ if TYPE_CHECKING:
 
     from tenacity.wait import WaitBaseT
 
-    from buda_client.core.settings import BudaSettings
+    from buda.core.settings import BudaSettings
 
-logger = logging.getLogger("buda_client.retry")
+logger = logging.getLogger("buda.retry")
 
 RETRYABLE_STATUS_CODES: frozenset[int] = frozenset({429, 500, 503})
 

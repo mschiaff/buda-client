@@ -8,18 +8,18 @@ from warnings import deprecated
 from httpx import Client
 from pydantic import BaseModel
 
-from buda_client.core.limiter import SyncRateLimiter
-from buda_client.core.retry import sync_retry_on_error
-from buda_client.rest.client.base import BaseClient
-from buda_client.rest.endpoints import account, markets, orders
-from buda_client.rest.models.account import Balance, BalanceList, UserInfo  # noqa: TC001
-from buda_client.rest.models.markets import (  # noqa: TC001
+from buda.core.limiter import SyncRateLimiter
+from buda.core.retry import sync_retry_on_error
+from buda.rest.client.base import BaseClient
+from buda.rest.endpoints import account, markets, orders
+from buda.rest.models.account import Balance, BalanceList, UserInfo  # noqa: TC001
+from buda.rest.models.markets import (  # noqa: TC001
     Market,
     MarketList,
     MarketTicker,
     TickerList,
 )
-from buda_client.rest.models.orders import (  # noqa: TC001
+from buda.rest.models.orders import (  # noqa: TC001
     OrderBook,
     OrderCancelAllResponse,
     OrderCancelResponse,
@@ -31,10 +31,10 @@ from buda_client.rest.models.orders import (  # noqa: TC001
 )
 
 if TYPE_CHECKING:
-    from buda_client.core.providers import BudaCredentials
-    from buda_client.core.settings import BudaSettings
-    from buda_client.rest.endpoints.base import Endpoint, RequestMethod
-    from buda_client.rest.endpoints.orders import QuotationPayload, TradesParams
+    from buda.core.providers import BudaCredentials
+    from buda.core.settings import BudaSettings
+    from buda.rest.endpoints.base import Endpoint, RequestMethod
+    from buda.rest.endpoints.orders import QuotationPayload, TradesParams
 
 
 T = TypeVar("T", bound=BaseModel)

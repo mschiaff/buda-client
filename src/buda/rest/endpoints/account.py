@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import overload
 
-from buda_client.rest.endpoints.base import Endpoint
-from buda_client.rest.models.account import Balance, BalanceList, UserInfo
+from buda.rest.endpoints.base import Endpoint
+from buda.rest.models.account import Balance, BalanceList, UserInfo
 
 
 def me_endpoint() -> Endpoint[UserInfo]:

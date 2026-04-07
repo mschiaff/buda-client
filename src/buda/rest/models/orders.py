@@ -4,7 +4,7 @@ from typing import Annotated, Any, Literal, NotRequired, TypedDict
 
 from pydantic import BaseModel, Field, RootModel, model_validator
 
-from buda_client.rest.models.common import CurrencyValue, PriceAmount  # noqa: TC001
+from buda.rest.models.common import CurrencyValue, PriceAmount  # noqa: TC001
 
 type QuotationType = Literal[
     "bid_given_size", "bid_given_earned_base",

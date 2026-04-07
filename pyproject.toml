@@ -1,5 +1,5 @@
 [project]
-name = "buda-client"
+name = "buda"
 version = "0.1.0"
 description = "Buda.com API client with support for both REST and WebSocket APIs."
 readme = "README.md"
@@ -50,4 +50,4 @@ select = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["buda_client"]
+known-first-party = ["buda"]

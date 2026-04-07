@@ -8,9 +8,9 @@ from collections import deque
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from buda_client.core.settings import BudaSettings
+    from buda.core.settings import BudaSettings
 
-logger = logging.getLogger("buda_client.rate_limiter")
+logger = logging.getLogger("buda.limiter")
 
 
 class SyncRateLimiter:
