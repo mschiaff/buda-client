@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import sys
 from typing import TYPE_CHECKING, Any, Literal, TypeVar, overload
-from warnings import deprecated
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 from httpx import Client
 from pydantic import BaseModel
