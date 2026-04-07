@@ -74,7 +74,7 @@ with BudaClient() as client:
 
     # Fetch the order book
     book = client.public.order_book("btc-clp")
-    print(f"Best bid: {book.bids[0].price}, Best ask: {book.asks[0].price}")
+    print(f"Best bid: {book.bids.max().price}, Best ask: {book.asks.min().price}")
 ```
 
 The clients also work fine without a context manager — just remember to close them when you're done:
