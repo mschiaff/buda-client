@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, model_validator
+from typing import Literal
+
+from pydantic import BaseModel, RootModel, model_validator
 
 
 class CurrencyValue(BaseModel):
@@ -23,3 +25,17 @@ class PriceAmount(BaseModel):
     def parse_list(cls, data: list[str]) -> dict[str, str]:
         price, amount = data
         return dict(price=price, amount=amount)
+
+
+class PriceAmountList(RootModel[list[PriceAmount]]):
+    def __getitem__(self, index: int) -> PriceAmount:
+        return self.root[index]
+
+    def __len__(self) -> int:
+        return len(self.root)
+    
+    def min(self, key: Literal["price", "amount"] = "price") -> PriceAmount:
+        return min(self.root, key=lambda entry: getattr(entry, key))
+    
+    def max(self, key: Literal["price", "amount"] = "price") -> PriceAmount:
+        return max(self.root, key=lambda entry: getattr(entry, key))

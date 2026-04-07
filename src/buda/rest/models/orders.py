@@ -4,7 +4,7 @@ from typing import Annotated, Any, Literal, NotRequired, TypedDict
 
 from pydantic import BaseModel, Field, RootModel, model_validator
 
-from buda.rest.models.common import CurrencyValue, PriceAmount  # noqa: TC001
+from buda.rest.models.common import CurrencyValue, PriceAmountList  # noqa: TC001
 
 type QuotationType = Literal[
     "bid_given_size",
@@ -30,8 +30,8 @@ class StopOrder(TypedDict, total=False):
 
 class OrderBook(BaseModel):
     market_id: str
-    bids: list[PriceAmount]
-    asks: list[PriceAmount]
+    bids: PriceAmountList
+    asks: PriceAmountList
 
     @model_validator(mode="before")
     @classmethod
