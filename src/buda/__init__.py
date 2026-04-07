@@ -1,9 +1,13 @@
+from importlib.metadata import version
+
 from buda.core.providers import DotEnvCredentials, EnvCredentials, StaticCredentials
 from buda.core.settings import BudaSettings
 from buda.rest.client.async_ import AsyncBudaClient
 from buda.rest.client.sync_ import BudaClient
 from buda.rest.models.orders import OrderCreate
 from buda.socket import BudaWebSocketClient, Channel
+
+__version__ = version("buda")
 
 __all__ = (
     "AsyncBudaClient",
