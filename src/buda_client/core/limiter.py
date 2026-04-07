@@ -19,9 +19,8 @@ class SyncRateLimiter:
     Tracks per-second (shared) and per-minute (auth vs unauth) request
     timestamps and sleeps when the next request would exceed limits.
 
-    Each ``BudaClient`` instance owns its own limiter, which is correct
-    since Buda rate limits are scoped per IP (unauthenticated) and per
-    API key (authenticated).
+    Each ``BudaClient`` instance owns its own limiter, since Buda rate
+    limits are scoped per IP (unauthenticated) and per API key (authenticated).
     """
 
     __slots__ = (
