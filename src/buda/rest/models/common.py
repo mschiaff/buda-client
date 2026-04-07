@@ -33,9 +33,9 @@ class PriceAmountList(RootModel[list[PriceAmount]]):
 
     def __len__(self) -> int:
         return len(self.root)
-    
+
     def min(self, key: Literal["price", "amount"] = "price") -> PriceAmount:
         return min(self.root, key=lambda entry: getattr(entry, key))
-    
+
     def max(self, key: Literal["price", "amount"] = "price") -> PriceAmount:
         return max(self.root, key=lambda entry: getattr(entry, key))
