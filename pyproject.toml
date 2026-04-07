@@ -77,3 +77,9 @@ select = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["buda"]
+
+[tool.coverage.report]
+exclude_also = [
+    "from warnings import deprecated",
+    "from typing_extensions import deprecated",
+]
