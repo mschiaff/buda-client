@@ -464,6 +464,9 @@ class BudaClient(BaseClient[Client]):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> None: # type: ignore
+        self.close()
+
+    def close(self) -> None:
         self._client.close()
 
     @overload

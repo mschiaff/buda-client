@@ -71,6 +71,16 @@ with BudaClient() as client:
     print(f"Best bid: {book.bids[0].price}, Best ask: {book.asks[0].price}")
 ```
 
+The clients also work fine without a context manager — just remember to close them when you're done:
+
+```python
+from buda import BudaClient
+
+client = BudaClient()
+markets = client.public.markets()
+client.close()
+```
+
 ### Async usage
 
 Same API, just `async`:

@@ -463,6 +463,9 @@ class AsyncBudaClient(BaseClient[AsyncClient]):
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None: # type: ignore
+        await self.close()
+
+    async def close(self) -> None:
         await self._client.aclose()
 
     @overload
