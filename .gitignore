@@ -18,6 +18,11 @@ wheels/
 
 # Cache files
 .ruff_cache/
+.pytest_cache/
+
+# Coverage files
+.coverage
+htmlcov/
 
 # Environment variables file
 .env

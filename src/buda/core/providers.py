@@ -24,7 +24,7 @@ class StaticCredentials(BudaCredentials):
     """Provider that uses static credentials."""
 
     def __init__(self, *, api_key: str, api_secret: str) -> None:
-        super().__init__(api_key=api_key, api_secret=api_secret) # type: ignore
+        super().__init__(buda_api_key=api_key, buda_api_secret=api_secret) # type: ignore
 
 
 class EnvCredentials(BudaCredentials):
@@ -42,7 +42,7 @@ class DotEnvCredentials(BudaCredentials):
     model_config = SettingsConfigDict(env_file=".env")
 
     def __init__(self, env_file: str = ".env", **kwargs: Any) -> None:
-        super().__init__(env_file=env_file, **kwargs) # type: ignore
+        super().__init__(_env_file=env_file, **kwargs) # type: ignore
     
     @classmethod
     def settings_customise_sources(

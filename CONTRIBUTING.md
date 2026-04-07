@@ -43,6 +43,10 @@ uv run pyright
 
 # Tests
 uv run pytest
+
+# Tests with coverage report
+uv run coverage run --source=src/buda -m pytest
+uv run coverage report -m
 ```
 
 Please make sure all checks pass before submitting a pull request.
