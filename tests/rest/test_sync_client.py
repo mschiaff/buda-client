@@ -76,6 +76,30 @@ class TestBudaClientRequest:
             assert kwargs.get("auth") is not None
 
 
+class TestRawRequest:
+    def test_raw_request_returns_json(self):
+        client = BudaClient(settings=FAST_SETTINGS)
+        response = make_mock_response({"markets": [MARKET_RAW]})
+        with patch.object(client._client, "request", return_value=response):
+            result = client._raw_request("GET", "/markets")
+            assert isinstance(result, dict)
+            assert "markets" in result
+
+    def test_raw_request_authenticated(self):
+        client = BudaClient(settings=FAST_SETTINGS, provider=CREDS)
+        response = make_mock_response(USER_INFO_RAW)
+        with patch.object(client._client, "request", return_value=response) as mock_req:
+            result = client._raw_request("GET", "/me", authenticated=True)
+            assert "user" in result
+            _, kwargs = mock_req.call_args
+            assert kwargs.get("auth") is not None
+
+    def test_raw_request_raises_without_credentials(self):
+        client = BudaClient(settings=FAST_SETTINGS)
+        with pytest.raises(ValueError, match="no auth credentials"):
+            client._raw_request("GET", "/me", authenticated=True)
+
+
 class TestPublicAPI:
     def _make_client(self) -> BudaClient:
         return BudaClient(settings=FAST_SETTINGS)
