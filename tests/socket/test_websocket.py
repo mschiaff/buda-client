@@ -8,6 +8,7 @@ from contextlib import suppress
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from pytest import CaptureFixture
 
 from buda.core.settings import BudaSettings
 from buda.socket.channels import Channel
@@ -137,6 +138,89 @@ class TestSubscribe:
             assert handler.call_count == 1
             call_data = handler.call_args[0][0]
             assert call_data["ev"] == "book-changed"
+
+
+class TestDefaultHandler:
+    async def test_default_handler_prints(self, capsys: CaptureFixture[str]):
+        from buda.socket.client import default_handler
+        await default_handler({"ev": "test", "value": 42})
+        captured = capsys.readouterr()
+        assert "test" in captured.out
+        assert "42" in captured.out
+
+
+class TestSubscribeEdgeCases:
+    async def test_non_json_message_is_skipped(self):
+        client = BudaWebSocketClient(settings=FAST_SETTINGS)
+        handler = AsyncMock()
+
+        async def async_iter_messages():
+            yield "not-valid-json{{{{"
+            yield json.dumps({"ev": "book-changed", "data": "valid"})
+
+        mock_ws = AsyncMock()
+        mock_ws.__aiter__ = lambda _: async_iter_messages()  # type: ignore
+
+        async def connect_iter():
+            yield mock_ws
+
+        mock_connect_ctx = MagicMock()
+        mock_connect_ctx.__aiter__ = lambda _: connect_iter()  # type: ignore
+
+        with patch("buda.socket.client.connect", return_value=mock_connect_ctx):
+            import asyncio
+            task = asyncio.create_task(
+                client.subscribe(Channel.book("btcclp"), handler=handler)
+            )
+            await asyncio.sleep(0.1)
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
+
+            assert handler.call_count == 1
+            assert handler.call_args[0][0]["ev"] == "book-changed"
+
+    async def test_connection_closed_reconnects(self):
+        from websockets import ConnectionClosed
+        from websockets.frames import Close
+
+        client = BudaWebSocketClient(settings=FAST_SETTINGS)
+        handler = AsyncMock()
+
+        close_frame = Close(1006, "abnormal")
+
+        async def iter_then_close():
+            raise ConnectionClosed(close_frame, None)
+            yield  # make it a generator
+
+        async def iter_normal():
+            yield json.dumps({"ev": "book-changed", "data": "after-reconnect"})
+
+        mock_ws_broken = AsyncMock()
+        mock_ws_broken.__aiter__ = lambda _: iter_then_close()  # type: ignore
+
+        mock_ws_good = AsyncMock()
+        mock_ws_good.__aiter__ = lambda _: iter_normal()  # type: ignore
+
+        async def connect_iter():
+            yield mock_ws_broken
+            yield mock_ws_good
+
+        mock_connect_ctx = MagicMock()
+        mock_connect_ctx.__aiter__ = lambda _: connect_iter()  # type: ignore
+
+        with patch("buda.socket.client.connect", return_value=mock_connect_ctx):
+            import asyncio
+            task = asyncio.create_task(
+                client.subscribe(Channel.book("btcclp"), handler=handler)
+            )
+            await asyncio.sleep(0.2)
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
+
+            handler.assert_called_once()
+            assert handler.call_args[0][0]["data"] == "after-reconnect"
 
 
 class TestConvenienceMethods:
