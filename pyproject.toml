@@ -22,7 +22,6 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Financial and Insurance Industry",
-    "License :: OSI Approved :: Apache Software License",
     "Topic :: Office/Business :: Financial",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Programming Language :: Python :: 3",
@@ -54,6 +53,7 @@ dev = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+junit_family = "legacy"
 
 [tool.pyright]
 pythonVersion = "3.12"

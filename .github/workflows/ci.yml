@@ -58,7 +58,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          uv run coverage run --source=src/buda -m pytest
+          uv run coverage run --source=src/buda -m pytest --junitxml=junit.xml
           uv run coverage xml -o coverage.xml
 
       - name: Upload coverage to Codecov
@@ -66,4 +66,13 @@ jobs:
         uses: codecov/codecov-action@v6
         with:
           files: coverage.xml
+          report_type: "coverage"
+          fail_ci_if_error: false
+      
+      - name: Upload test results to Codecov
+        if: matrix.python-version == '3.13'
+        uses: codecov/codecov-action@v6
+        with:
+          files: junit.xml
+          report_type: "test_results"
           fail_ci_if_error: false

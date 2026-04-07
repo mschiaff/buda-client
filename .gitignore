@@ -21,6 +21,8 @@ wheels/
 .pytest_cache/
 
 # Coverage files
+coverage.xml
+junit.xml
 .coverage
 htmlcov/
 
