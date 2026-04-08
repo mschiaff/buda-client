@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] - 2026-04-08
 
 ### Features
 
@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Import deprecated from typing_extensions for compatibility with Python < 3.13 ([b0a694a](https://github.com/mschiaff/buda-client/commit/b0a694a389c7e2cc1846c378c9a86b897eac19d5))
 - Add tests for PriceAmountList min and max methods ([3b73ff2](https://github.com/mschiaff/buda-client/commit/3b73ff2b7c37bc363c85826d60b0048a03a219d2))
 - Update coverage report configuration to exclude deprecated imports ([ee9d329](https://github.com/mschiaff/buda-client/commit/ee9d329178de66072f012204ac5e3fbf30620283))
+- Implement release workflow with version bumping and changelog generation ([c1780dc](https://github.com/mschiaff/buda-client/commit/c1780dcd68ee21d8283ecdd6d895ec43b39ca12c))
 
 ### Bug Fixes
 
@@ -58,6 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub Actions to use latest versions of checkout, setup-uv, and setup-python ([13ca4f5](https://github.com/mschiaff/buda-client/commit/13ca4f504ac43841db3c34f472b42e0d15e6cbc2))
 - Update setup-uv cache suffix and upgrade Codecov action to v6 ([d0ddad1](https://github.com/mschiaff/buda-client/commit/d0ddad1605c788d799ce0e737348a611ffe041df))
 - Update order book example to use max and min methods for bids and asks ([4381920](https://github.com/mschiaff/buda-client/commit/4381920be040e6bafc109af95fe197f353e8dabe))
+- Update project name to 'buda-client' in configuration files ([3f64241](https://github.com/mschiaff/buda-client/commit/3f642411f2c7e4406985f492cb5221151369ac0e))
+- Update package name to 'buda-client' in uv.lock and adjust build backend module name in pyproject.toml ([c6150b7](https://github.com/mschiaff/buda-client/commit/c6150b72a178d377dceffbc20b7da8f986b8cfd3))
 
 ### Refactor
 
@@ -86,5 +89,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Styling
 
 - Format code by removing unnecessary blank lines in PriceAmountList methods ([ca5a497](https://github.com/mschiaff/buda-client/commit/ca5a49739546985b3e74052f813bd134800eed94))
+
+### Miscellaneous
+
+- Add initial_tag configuration for versioning ([e953910](https://github.com/mschiaff/buda-client/commit/e9539102381765641732e7f710aa934636b198cf))
 
 
