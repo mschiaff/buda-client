@@ -60,6 +60,32 @@ uv run pre-commit run --all-files
 
 Please make sure all checks pass before submitting a pull request.
 
+## Commit Messages
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/). A pre-commit hook validates your commit messages automatically.
+
+Format: `type(scope): description`
+
+| Type       | When to use                        |
+|------------|------------------------------------|
+| `feat`     | New feature                        |
+| `fix`      | Bug fix                            |
+| `docs`     | Documentation only                 |
+| `style`    | Formatting, no logic change        |
+| `refactor` | Code change that neither fixes nor adds |
+| `perf`     | Performance improvement            |
+| `test`     | Adding or updating tests           |
+| `build`    | Build system or dependencies       |
+| `ci`       | CI configuration                   |
+| `chore`    | Maintenance tasks                  |
+| `revert`   | Reverting a previous commit        |
+
+To activate the commit-msg hook:
+
+```bash
+uv run pre-commit install --hook-type commit-msg
+```
+
 ## Code Standards
 
 - **Type hints are required** on all public and private functions. The project uses Pyright in strict mode — your code must pass without errors.
@@ -72,6 +98,40 @@ Please make sure all checks pass before submitting a pull request.
 2. Make your changes in focused, well-scoped commits.
 3. Make sure all checks pass (`ruff check`, `ruff format --check`, `pyright`, `pytest`).
 4. Open a pull request against `main` with a clear description of what you changed and why.
+
+## Releasing
+
+Releases are triggered by pushing a `v*` tag to `main`. Two paths are available:
+
+### Option A: Local release (recommended)
+
+Requires [git-cliff](https://git-cliff.org/) (`brew install git-cliff`).
+
+```bash
+./scripts/release.sh patch   # 0.1.0 → 0.1.1
+./scripts/release.sh minor   # 0.1.0 → 0.2.0
+./scripts/release.sh major   # 0.1.0 → 1.0.0
+./scripts/release.sh auto    # infer from conventional commits
+```
+
+The script will show a summary and ask for confirmation before pushing.
+
+### Option B: GitHub Actions UI
+
+Go to **Actions → Bump Version → Run workflow** and choose the bump type. Use `dry_run: true` to preview.
+
+### What happens after a tag push
+
+The `release.yml` workflow:
+
+1. Runs full CI (lint + tests across Python 3.12/3.13/3.14)
+2. Builds the sdist and wheel
+3. Creates a GitHub Release with auto-generated changelog
+4. Publishes to PyPI via trusted publishers
+
+### Tag convention
+
+Tags follow `v{major}.{minor}.{patch}` — e.g., `v0.1.0`, `v0.2.0`, `v1.0.0`.
 
 ## License
 
