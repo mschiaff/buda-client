@@ -7,7 +7,7 @@ from buda.rest.client.sync_ import BudaClient
 from buda.rest.models.orders import OrderCreate
 from buda.socket import BudaWebSocketClient, Channel
 
-__version__ = version("buda")
+__version__ = version("buda-client")
 
 __all__ = (
     "AsyncBudaClient",
