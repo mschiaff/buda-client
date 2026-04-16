@@ -5,8 +5,6 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class Channel:
-    """Represents a Buda.com WebSocket channel subscription."""
-
     name: str
     param: str
     private: bool
@@ -45,6 +43,8 @@ class Channel:
         """
         if self.private:
             if not pubsub_key:
-                raise ValueError(f"Channel '{self.name}' is private and requires a pubsub_key.")
+                raise ValueError(
+                    f"Channel '{self.name}' is private and requires a pubsub_key."
+                )
             return f"{self.name}@{pubsub_key}"
         return f"{self.name}@{self.param}"

@@ -72,7 +72,8 @@ def cancel_order_endpoint(order_id: int) -> Endpoint[OrderCancelResponse]:
 
 
 def cancel_all_orders_endpoint(
-    market_id: str | None = None, type: str | None = None
+        market_id: str | None = None,
+        type: str | None = None
 ) -> Endpoint[OrderCancelAllResponse]:
     return Endpoint(
         model=OrderCancelAllResponse,

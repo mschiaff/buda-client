@@ -11,7 +11,7 @@ class CurrencyValue(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def parse_list(cls, data: list[str]) -> dict[str, str]:
+    def _parse_list(cls, data: list[str]) -> dict[str, str]:
         value, currency = data
         return dict(value=value, currency=currency)
 
@@ -22,7 +22,7 @@ class PriceAmount(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def parse_list(cls, data: list[str]) -> dict[str, str]:
+    def _parse_list(cls, data: list[str]) -> dict[str, str]:
         price, amount = data
         return dict(price=price, amount=amount)
 

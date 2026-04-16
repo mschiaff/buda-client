@@ -1,13 +1,12 @@
-from __future__ import annotations
-
 from typing import Any
 
 from pydantic import BaseModel, RootModel, model_validator
 
-from buda.rest.models.common import CurrencyValue  # noqa: TC001
-
+from buda.rest.models.common import CurrencyValue
 
 class Market(BaseModel):
+    """Represents a market on the Buda exchange."""
+
     id: str
     name: str
     base_currency: str
@@ -27,26 +26,31 @@ class Market(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        if data.get("market"):
-            return data["market"]
-        return data
+        ...
 
 
 class MarketList(RootModel[list[Market]]):
+    """A list of :class:`Market` entries."""
+    
     @model_validator(mode="before")
     @classmethod
     def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        return data["markets"]
+        ...
 
 
 class Ticker(BaseModel):
+    """Represents a ticker on the Buda exchange."""
+
     market_id: str
     price_variation_24h: float
     price_variation_7d: float
     last_price: CurrencyValue
+    ...
 
 
 class MarketTicker(Ticker):
+    """Represents a market ticker with additional details."""
+    
     min_ask: CurrencyValue
     max_bid: CurrencyValue
     volume: CurrencyValue
@@ -55,11 +59,13 @@ class MarketTicker(Ticker):
     @model_validator(mode="before")
     @classmethod
     def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        return data["ticker"]
+        ...
 
 
 class TickerList(RootModel[list[Ticker]]):
+    """A list of :class:`Ticker` entries."""
+
     @model_validator(mode="before")
     @classmethod
     def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        return data["tickers"]
+        ...
