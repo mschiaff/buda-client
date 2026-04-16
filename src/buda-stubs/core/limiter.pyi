@@ -1,7 +1,11 @@
 import asyncio
 from collections import deque
+from logging import Logger
 
 from buda.core.settings import BudaSettings
+
+logger: Logger = ...
+
 
 class SyncRateLimiter:
     """
