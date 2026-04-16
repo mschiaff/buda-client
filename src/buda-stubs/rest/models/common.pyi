@@ -10,31 +10,23 @@ class CurrencyValue(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_list(cls, data: list[str]) -> dict[str, str]:
-        ...
-    
+    def _parse_list(cls, data: list[str]) -> dict[str, str]: ...
 
 class PriceAmount(BaseModel):
     """Represents a price and amount pair."""
 
     price: float
     amount: float
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_list(cls, data: list[str]) -> dict[str, str]:
-        ...
-
+    def _parse_list(cls, data: list[str]) -> dict[str, str]: ...
 
 class PriceAmountList(RootModel[list[PriceAmount]]):
     """A list of :class:`PriceAmount` entries with utility methods."""
-    
-    def __getitem__(self, index: int) -> PriceAmount:
-        ...
-    
-    def __len__(self) -> int:
-        ...
-    
+
+    def __getitem__(self, index: int) -> PriceAmount: ...
+    def __len__(self) -> int: ...
     def min(self, key: Literal["price", "amount"] = ...) -> PriceAmount:
         """
         Get the entry with the minimum value for the specified key.
@@ -50,7 +42,7 @@ class PriceAmountList(RootModel[list[PriceAmount]]):
             The entry with the minimum value for the specified key.
         """
         ...
-    
+
     def max(self, key: Literal["price", "amount"] = ...) -> PriceAmount:
         """
         Get the entry with the maximum value for the specified key.

@@ -3,7 +3,6 @@ from pydantic.dataclasses import dataclass
 
 type BaseUrl = str
 
-
 @dataclass(frozen=True, kw_only=True, slots=True)
 class BudaSettings:
     """Settings for Buda API clients."""
@@ -13,7 +12,7 @@ class BudaSettings:
     """Base URL for the Buda API."""
     timeout: float | int
     """Timeout for API requests in seconds."""
-    
+
     # REST API - Retry Settings (tenacity)
     retry_enabled: bool
     """Enable automatic retry for 429, 500, and 503 HTTP errors."""
@@ -25,7 +24,7 @@ class BudaSettings:
     """Maximum wait time between retries in seconds."""
     retry_exponential_base: float
     """Base for exponential backoff between retries."""
-    
+
     # REST API - Rate Limit Settings
     rate_limit_enabled: bool
     """Enable proactive rate limiting."""
@@ -35,7 +34,7 @@ class BudaSettings:
     """Maximum authenticated requests per minute (per API key)."""
     rate_limit_unauth_per_minute: int
     """Maximum unauthenticated requests per minute (per IP)."""
-    
+
     # WebSocket API Settings
     base_uri: WebsocketUrl
     """Base URI for the Buda WebSocket API."""
@@ -47,31 +46,31 @@ class BudaSettings:
     """Timeout for WebSocket pings in seconds."""
     close_timeout: float | None
     """Timeout for closing WebSocket connections in seconds."""
-    
+
     # Common Settings
     user_agent: str
     """User-Agent header to use for API requests."""
 
     def __init__(
-            self,
-            *,
-            base_url: BaseUrl = ...,
-            timeout: float | int = ...,
-            retry_enabled: bool = ...,
-            retry_max_attempts: int = ...,
-            retry_min_wait: float = ...,
-            retry_max_wait: float = ...,
-            retry_exponential_base: float = ...,
-            rate_limit_enabled: bool = ...,
-            rate_limit_per_second: int = ...,
-            rate_limit_auth_per_minute: int = ...,
-            rate_limit_unauth_per_minute: int = ...,
-            base_uri: WebsocketUrl = ...,
-            open_timeout: float | None = ...,
-            ping_interval: float | None = ...,
-            ping_timeout: float | None = ...,
-            close_timeout: float | None = ...,
-            user_agent: str = ...,
+        self,
+        *,
+        base_url: BaseUrl = ...,
+        timeout: float | int = ...,
+        retry_enabled: bool = ...,
+        retry_max_attempts: int = ...,
+        retry_min_wait: float = ...,
+        retry_max_wait: float = ...,
+        retry_exponential_base: float = ...,
+        rate_limit_enabled: bool = ...,
+        rate_limit_per_second: int = ...,
+        rate_limit_auth_per_minute: int = ...,
+        rate_limit_unauth_per_minute: int = ...,
+        base_uri: WebsocketUrl = ...,
+        open_timeout: float | None = ...,
+        ping_interval: float | None = ...,
+        ping_timeout: float | None = ...,
+        close_timeout: float | None = ...,
+        user_agent: str = ...,
     ) -> None:
         """
         Initialize the BudaSettings with the provided values.
@@ -114,7 +113,7 @@ class BudaSettings:
             User-Agent header to use for API requests (default: "buda-client/1.0").
         """
         ...
-    
+
     @property
     def headers(self) -> dict[str, str]:
         """Default headers for API requests."""

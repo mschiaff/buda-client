@@ -11,16 +11,15 @@ logger: Logger = ...
 
 RETRYABLE_STATUS_CODES: frozenset[int] = ...
 
-
 def is_retryable_error(exc: BaseException) -> bool:
     """
     Test whether *exc* is an HTTP error with a retryable status code.
-    
+
     Parameters
     ----------
     exc : BaseException
         The exception to check.
-    
+
     Returns
     -------
     bool
@@ -28,7 +27,6 @@ def is_retryable_error(exc: BaseException) -> bool:
         status code, ``False`` otherwise.
     """
     ...
-
 
 class _RetryAfterWait:
     """
@@ -38,7 +36,7 @@ class _RetryAfterWait:
     time will be *at least* the value specified by the server.  Otherwise
     it falls back to zero so a chained exponential strategy takes over.
     """
-    
+
     def __call__(self, retry_state: RetryCallState) -> float:
         """
         Calculate the wait time based on the ``Retry-After`` header.
@@ -54,7 +52,6 @@ class _RetryAfterWait:
             The wait time in seconds.
         """
         ...
-
 
 def _build_wait(settings: BudaSettings) -> WaitBaseT:
     """
@@ -72,7 +69,6 @@ def _build_wait(settings: BudaSettings) -> WaitBaseT:
     """
     ...
 
-
 def sync_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
     """
     Decorator for synchronous methods that retries on 429 / 500 / 503.
@@ -84,14 +80,13 @@ def sync_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
     ----------
     fn : Callable[..., Any]
         The function to decorate.
-    
+
     Returns
     -------
     Callable[..., Any]
         The decorated function with retry logic.
     """
     ...
-
 
 def async_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
     """
@@ -110,4 +105,3 @@ def async_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
         The decorated function with retry logic.
     """
     ...
-

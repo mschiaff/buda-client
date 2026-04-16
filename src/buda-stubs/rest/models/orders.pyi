@@ -16,14 +16,12 @@ QuotationType = Literal[
 ]
 """Represents the type of a quotation."""
 
-
 class LimitOrder(TypedDict, total=False):
     """Represents a limit order with optional price and type."""
 
     price: float
     type: NotRequired[Literal["gtc", "ioc", "fok", "post_only", "gtd"]]
     ...
-
 
 class StopOrder(TypedDict, total=False):
     """Represents a stop order with optional price and type."""
@@ -32,19 +30,16 @@ class StopOrder(TypedDict, total=False):
     type: NotRequired[Literal["stop_loss", "take_profit"]]
     ...
 
-
 class OrderBook(BaseModel):
     """Represents the order book for a market."""
 
     market_id: str
     bids: PriceAmountList
     asks: PriceAmountList
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class Trades(BaseModel):
     """Represents a collection of trades for a market."""
@@ -56,9 +51,7 @@ class Trades(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class TradeEntry(BaseModel):
     """Represents a single trade entry."""
@@ -68,12 +61,10 @@ class TradeEntry(BaseModel):
     direction: Literal["buy", "sell"]
     amount: float
     price: float
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_list(cls, data: list[str | int]) -> dict[str, Any]:
-        ...
-
+    def _parse_list(cls, data: list[str | int]) -> dict[str, Any]: ...
 
 class Quotation(BaseModel):
     """Represents a quotation."""
@@ -88,12 +79,10 @@ class Quotation(BaseModel):
     quote_balance_change: CurrencyValue
     fee: CurrencyValue
     incomplete: bool
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class OrderCreate(BaseModel):
     """Represents the data required to create an order."""
@@ -104,7 +93,6 @@ class OrderCreate(BaseModel):
     limit: LimitOrder | None = ...
     stop: StopOrder | None = ...
     client_id: str | None = ...
-
 
 class OrderCreateResponse(BaseModel):
     """Represents the response received after creating an order."""
@@ -127,9 +115,7 @@ class OrderCreateResponse(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class OrderDetail(BaseModel):
     """Represents the details of an order."""
@@ -149,12 +135,10 @@ class OrderDetail(BaseModel):
     total_exchanged: CurrencyValue
     traded_amount: CurrencyValue
     type: Literal["Bid", "Ask"]
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class OrderCancelResponse(BaseModel):
     """Represents the response received after canceling an order."""
@@ -174,17 +158,14 @@ class OrderCancelResponse(BaseModel):
     total_exchanged: CurrencyValue
     traded_amount: CurrencyValue
     type: Literal["Bid", "Ask"]
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class OrderCancelAllResponse(RootModel[list[OrderCancelResponse]]):
     """Represents the response received after canceling all orders."""
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...

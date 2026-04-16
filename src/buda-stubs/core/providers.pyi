@@ -27,16 +27,15 @@ class BudaCredentials(BaseSettings):
             The API secret for authentication.
         """
         ...
-    
+
     @model_serializer(mode="plain", return_type=dict[str, str])
     def _serialize(self) -> dict[str, str]:
         """Serialize the credentials to a plain dictionary."""
         ...
 
-
 class StaticCredentials(BudaCredentials):
     """Provider that uses static credentials."""
-    
+
     def __init__(self, *, api_key: str, api_secret: str) -> None:
         """
         Initialize StaticCredentials with API key and secret.
@@ -50,7 +49,6 @@ class StaticCredentials(BudaCredentials):
         """
         ...
 
-
 class EnvCredentials(BudaCredentials):
     """Provider that loads credentials from environment variables."""
 
@@ -60,7 +58,6 @@ class EnvCredentials(BudaCredentials):
         """Initialize EnvCredentials with optional arguments."""
         ...
 
-
 class DotEnvCredentials(BudaCredentials):
     """Provider that loads credentials from a .env file."""
 
@@ -69,7 +66,7 @@ class DotEnvCredentials(BudaCredentials):
     def __init__(self, env_file: str = ..., **kwargs: Any) -> None:
         """
         Initialize DotEnvCredentials with a .env file.
-        
+
         Parameters
         ----------
         env_file : str, optional
@@ -79,11 +76,10 @@ class DotEnvCredentials(BudaCredentials):
 
     @classmethod
     def settings_customise_sources(
-            cls,
-            settings_cls: type[BaseSettings],
-            init_settings: PydanticBaseSettingsSource,
-            env_settings: PydanticBaseSettingsSource,
-            dotenv_settings: PydanticBaseSettingsSource,
-            file_secret_settings: PydanticBaseSettingsSource
-    ) -> tuple[PydanticBaseSettingsSource, ...]:
-        ...
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]: ...

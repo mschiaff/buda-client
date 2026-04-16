@@ -16,5 +16,5 @@ __all__ = (
     "DotEnvCredentials",
     "EnvCredentials",
     "OrderCreate",
-    "StaticCredentials"
+    "StaticCredentials",
 )

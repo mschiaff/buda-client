@@ -8,11 +8,9 @@ from buda.socket.channels import Channel
 logger: Logger = ...
 type EventHandler = Callable[[dict[str, Any]], Awaitable[None]]
 
-
 async def default_handler(data: dict[str, Any]) -> None:
     """Print received WebSocket event data."""
     ...
-
 
 class BudaWebSocketClient:
     """Async WebSocket client for the Buda.com realtime API.
@@ -34,19 +32,16 @@ class BudaWebSocketClient:
             events={"book-changed", "balance-updated"},
         )
     """
-    
+
     __slots__ = ("_pubsub_key", "_settings")
 
     _pubsub_key: str | None
     """Pub/Sub key for private channels, or ``None`` if not set."""
     _settings: BudaSettings
     """Buda API settings, including the base URI."""
-    
+
     def __init__(
-            self,
-            *,
-            pubsub_key: str | None = ...,
-            settings: BudaSettings | None = ...
+        self, *, pubsub_key: str | None = ..., settings: BudaSettings | None = ...
     ) -> None:
         """
         Initialize a new BudaWebSocketClient instance.
@@ -60,12 +55,9 @@ class BudaWebSocketClient:
             defaults to a new BudaSettings instance.
         """
         ...
-    
+
     async def subscribe(
-            self,
-            *channels: Channel,
-            handler: EventHandler = ...,
-            events: set[str] | None = ...
+        self, *channels: Channel, handler: EventHandler = ..., events: set[str] | None = ...
     ) -> None:
         """Connect to one or more channels and stream events to *handler*.
 
@@ -84,17 +76,13 @@ class BudaWebSocketClient:
             When *None*, every event is forwarded.
         """
         ...
-    
+
     async def book(
-            self,
-            market_id: str,
-            *,
-            handler: EventHandler = ...,
-            events: set[str] | None = ...
+        self, market_id: str, *, handler: EventHandler = ..., events: set[str] | None = ...
     ) -> None:
         """
         Subscribe to order book updates for *market_id*.
-        
+
         Parameters
         ----------
         market_id : str
@@ -107,13 +95,9 @@ class BudaWebSocketClient:
             When *None*, every event is forwarded.
         """
         ...
-    
+
     async def trades(
-            self,
-            market_id: str,
-            *,
-            handler: EventHandler = ...,
-            events: set[str] | None = ...
+        self, market_id: str, *, handler: EventHandler = ..., events: set[str] | None = ...
     ) -> None:
         """
         Subscribe to trade events for *market_id*.
@@ -130,13 +114,8 @@ class BudaWebSocketClient:
             When *None*, every event is forwarded.
         """
         ...
-    
-    async def balances(
-            self,
-            *,
-            handler: EventHandler = ...,
-            events: set[str] | None = ...
-    ) -> None:
+
+    async def balances(self, *, handler: EventHandler = ..., events: set[str] | None = ...) -> None:
         """
         Subscribe to balance updates (requires ``pubsub_key``).
 
@@ -150,13 +129,8 @@ class BudaWebSocketClient:
             When *None*, every event is forwarded.
         """
         ...
-    
-    async def orders(
-            self,
-            *,
-            handler: EventHandler = ...,
-            events: set[str] | None = ...
-    ) -> None:
+
+    async def orders(self, *, handler: EventHandler = ..., events: set[str] | None = ...) -> None:
         """
         Subscribe to order updates (requires ``pubsub_key``).
 
@@ -171,12 +145,7 @@ class BudaWebSocketClient:
         """
         ...
 
-    async def deposits(
-            self,
-            *,
-            handler: EventHandler = ...,
-            events: set[str] | None = ...
-    ) -> None:
+    async def deposits(self, *, handler: EventHandler = ..., events: set[str] | None = ...) -> None:
         """
         Subscribe to deposit confirmations (requires ``pubsub_key``).
 
@@ -194,7 +163,7 @@ class BudaWebSocketClient:
     def _build_url(self, *channels: Channel) -> str:
         """
         Resolve channels and build the full WebSocket URL.
-        
+
         Parameters
         ----------
         channels : Channel

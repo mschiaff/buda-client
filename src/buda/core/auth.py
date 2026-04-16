@@ -15,7 +15,10 @@ if TYPE_CHECKING:
 
 
 class BudaAuth(httpx.Auth):
-    __slots__ = ("api_key", "api_secret",)
+    __slots__ = (
+        "api_key",
+        "api_secret",
+    )
 
     def __init__(self, api_key: str, api_secret: str):
         self.api_key = api_key
@@ -33,11 +36,7 @@ class BudaAuth(httpx.Auth):
         components.append(nonce)
         message = " ".join(components)
 
-        hash = hmac.new(
-            key=self.api_secret.encode(),
-            msg=message.encode(),
-            digestmod="sha384"
-        )
+        hash = hmac.new(key=self.api_secret.encode(), msg=message.encode(), digestmod="sha384")
 
         return hash.hexdigest()
 

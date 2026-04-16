@@ -25,18 +25,14 @@ class Market(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class MarketList(RootModel[list[Market]]):
     """A list of :class:`Market` entries."""
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class Ticker(BaseModel):
     """Represents a ticker on the Buda exchange."""
@@ -47,10 +43,9 @@ class Ticker(BaseModel):
     last_price: CurrencyValue
     ...
 
-
 class MarketTicker(Ticker):
     """Represents a market ticker with additional details."""
-    
+
     min_ask: CurrencyValue
     max_bid: CurrencyValue
     volume: CurrencyValue
@@ -58,14 +53,11 @@ class MarketTicker(Ticker):
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class TickerList(RootModel[list[Ticker]]):
     """A list of :class:`Ticker` entries."""
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...

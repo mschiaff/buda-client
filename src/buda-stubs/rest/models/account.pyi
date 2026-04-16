@@ -6,7 +6,7 @@ from buda.rest.models.common import CurrencyValue
 
 class UserInfo(BaseModel):
     """User information including account details and settings."""
-    
+
     id: str
     email: str
     category: str | None
@@ -35,12 +35,10 @@ class UserInfo(BaseModel):
     crypto_withdrawals_blocked: str | None
     fiat_withdrawals_blocked_reason: str | None
     crypto_withdrawals_blocked_reason: str | None
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class AccountInfo(BaseModel):
     """Detailed account information for a user."""
@@ -101,7 +99,6 @@ class AccountInfo(BaseModel):
     operation_funds_source: str | None
     ...
 
-
 class Balance(BaseModel):
     """Account balance information for a user."""
 
@@ -113,17 +110,14 @@ class Balance(BaseModel):
     frozen_amount: CurrencyValue
     pending_withdraw_amount: CurrencyValue
     account_id: int
-    
+
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
-
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...
 
 class BalanceList(RootModel[list[Balance]]):
     """List of account balances for a user."""
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]:
-        ...
+    def _parse_response(cls, data: dict[str, Any]) -> dict[str, Any]: ...

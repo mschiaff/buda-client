@@ -30,13 +30,11 @@ if sys.version_info >= (3, 13):
 else:
     from typing_extensions import deprecated
 
-
 T = TypeVar("T", bound=BaseModel)
-
 
 class PublicAPI:
     """Public API endpoints for the Buda API."""
-    
+
     __slots__ = ("_client",)
 
     _client: BudaClient
@@ -52,38 +50,21 @@ class PublicAPI:
             The BudaClient instance used to make API requests.
         """
         ...
-    
+
     @overload
     def markets(
-            self,
-            market_id: str,
-            *,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self, market_id: str, *, raw: Literal[False] = ..., authenticated: bool = ...
     ) -> Market: ...
     @overload
     def markets(
-            self,
-            market_id: None = ...,
-            *,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self, market_id: None = ..., *, raw: Literal[False] = ..., authenticated: bool = ...
     ) -> MarketList: ...
     @overload
     def markets(
-            self,
-            market_id: str | None = ...,
-            *,
-            raw: Literal[True],
-            authenticated: bool = ...
+        self, market_id: str | None = ..., *, raw: Literal[True], authenticated: bool = ...
     ) -> dict[str, Any]: ...
-
     def markets(
-            self,
-            market_id: str | None = ...,
-            *,
-            raw: bool = ...,
-            authenticated: bool = ...
+        self, market_id: str | None = ..., *, raw: bool = ..., authenticated: bool = ...
     ) -> Market | MarketList | dict[str, Any]:
         """
         Fetch market information from the Buda API.
@@ -105,38 +86,21 @@ class PublicAPI:
             a :class:`MarketList`, or the raw API response as a dictionary.
         """
         ...
-    
+
     @overload
     def tickers(
-            self,
-            market_id: str,
-            *,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self, market_id: str, *, raw: Literal[False] = ..., authenticated: bool = ...
     ) -> MarketTicker: ...
     @overload
     def tickers(
-            self,
-            market_id: None = ...,
-            *,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self, market_id: None = ..., *, raw: Literal[False] = ..., authenticated: bool = ...
     ) -> TickerList: ...
     @overload
     def tickers(
-            self,
-            market_id: str | None = ...,
-            *,
-            raw: Literal[True],
-            authenticated: bool = ...
+        self, market_id: str | None = ..., *, raw: Literal[True], authenticated: bool = ...
     ) -> dict[str, Any]: ...
-    
     def tickers(
-            self,
-            market_id: str | None = ...,
-            *,
-            raw: bool = ...,
-            authenticated: bool = ...
+        self, market_id: str | None = ..., *, raw: bool = ..., authenticated: bool = ...
     ) -> MarketTicker | TickerList | dict[str, Any]:
         """
         Fetch ticker information from the Buda API.
@@ -161,27 +125,14 @@ class PublicAPI:
 
     @overload
     def order_book(
-            self,
-            market_id: str,
-            *,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self, market_id: str, *, raw: Literal[False] = ..., authenticated: bool = ...
     ) -> OrderBook: ...
     @overload
     def order_book(
-            self,
-            market_id: str,
-            *,
-            raw: Literal[True],
-            authenticated: bool = ...
+        self, market_id: str, *, raw: Literal[True], authenticated: bool = ...
     ) -> dict[str, Any]: ...
-    
     def order_book(
-            self,
-            market_id: str,
-            *,
-            raw: bool = ...,
-            authenticated: bool = ...
+        self, market_id: str, *, raw: bool = ..., authenticated: bool = ...
     ) -> OrderBook | dict[str, Any]:
         """
         Fetch the order book for a specific market from the Buda API.
@@ -202,19 +153,19 @@ class PublicAPI:
             object or the raw API response as a dictionary.
         """
         ...
-    
+
     @overload
     @deprecated(
         "Authenticated trades requests with query params return 401. "
         "Use authenticated=False (default) when passing params."
     )
     def trades(
-            self,
-            market_id: str,
-            *,
-            params: TradesParams,
-            authenticated: Literal[True],
-            raw: Literal[False] = ...
+        self,
+        market_id: str,
+        *,
+        params: TradesParams,
+        authenticated: Literal[True],
+        raw: Literal[False] = ...,
     ) -> Trades: ...
     @overload
     @deprecated(
@@ -222,67 +173,64 @@ class PublicAPI:
         "Use authenticated=False (default) when passing params."
     )
     def trades(
-            self,
-            market_id: str,
-            *,
-            params: TradesParams,
-            authenticated: Literal[True],
-            raw: Literal[True]
+        self,
+        market_id: str,
+        *,
+        params: TradesParams,
+        authenticated: Literal[True],
+        raw: Literal[True],
     ) -> dict[str, Any]: ...
     @overload
     def trades(
-            self,
-            market_id: str,
-            *,
-            params: TradesParams | None = ...,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self,
+        market_id: str,
+        *,
+        params: TradesParams | None = ...,
+        raw: Literal[False] = ...,
+        authenticated: bool = ...,
     ) -> Trades: ...
     @overload
     def trades(
-            self,
-            market_id: str,
-            *,
-            params: TradesParams | None = ...,
-            raw: Literal[True],
-            authenticated: bool = ...
+        self,
+        market_id: str,
+        *,
+        params: TradesParams | None = ...,
+        raw: Literal[True],
+        authenticated: bool = ...,
     ) -> dict[str, Any]: ...
-    
     def trades(
-            self,
-            market_id: str,
-            *,
-            params: TradesParams | None = ...,
-            raw: bool = ...,
-            authenticated: bool = ...
+        self,
+        market_id: str,
+        *,
+        params: TradesParams | None = ...,
+        raw: bool = ...,
+        authenticated: bool = ...,
     ) -> Trades | dict[str, Any]: ...
-    
     @overload
     def quotations(
-            self,
-            market_id: str,
-            *,
-            payload: QuotationPayload,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self,
+        market_id: str,
+        *,
+        payload: QuotationPayload,
+        raw: Literal[False] = ...,
+        authenticated: bool = ...,
     ) -> Quotation: ...
     @overload
     def quotations(
-            self,
-            market_id: str,
-            *,
-            payload: QuotationPayload,
-            raw: Literal[True],
-            authenticated: bool = ...
+        self,
+        market_id: str,
+        *,
+        payload: QuotationPayload,
+        raw: Literal[True],
+        authenticated: bool = ...,
     ) -> dict[str, Any]: ...
-    
     def quotations(
-            self,
-            market_id: str,
-            *,
-            payload: QuotationPayload,
-            raw: bool = ...,
-            authenticated: bool = ...
+        self,
+        market_id: str,
+        *,
+        payload: QuotationPayload,
+        raw: bool = ...,
+        authenticated: bool = ...,
     ) -> Quotation | dict[str, Any]:
         """
         Fetch quotations for a specific market from the Buda API.
@@ -306,10 +254,9 @@ class PublicAPI:
         """
         ...
 
-
 class PrivateAPI:
     """Private API endpoints for the Buda API."""
-    
+
     __slots__ = ("_client",)
 
     _client: BudaClient
@@ -327,23 +274,10 @@ class PrivateAPI:
         ...
 
     @overload
-    def me(
-            self,
-            *,
-            raw: Literal[False] = ...
-    ) -> UserInfo: ...
+    def me(self, *, raw: Literal[False] = ...) -> UserInfo: ...
     @overload
-    def me(
-            self,
-            *,
-            raw: Literal[True]
-    ) -> dict[str, Any]: ...
-    
-    def me(
-            self,
-            *,
-            raw: bool = ...
-    ) -> UserInfo | dict[str, Any]:
+    def me(self, *, raw: Literal[True]) -> dict[str, Any]: ...
+    def me(self, *, raw: bool = ...) -> UserInfo | dict[str, Any]:
         """
         Fetch information about the authenticated user from the Buda API.
 
@@ -361,32 +295,13 @@ class PrivateAPI:
         ...
 
     @overload
-    def balances(
-            self,
-            currency: str,
-            *,
-            raw: Literal[False] = ...
-    ) -> Balance: ...
+    def balances(self, currency: str, *, raw: Literal[False] = ...) -> Balance: ...
     @overload
-    def balances(
-            self,
-            currency: None = ...,
-            *,
-            raw: Literal[False] = ...
-    ) -> BalanceList: ...
+    def balances(self, currency: None = ..., *, raw: Literal[False] = ...) -> BalanceList: ...
     @overload
+    def balances(self, currency: str | None = ..., *, raw: Literal[True]) -> dict[str, Any]: ...
     def balances(
-            self,
-            currency: str | None = ...,
-            *,
-            raw: Literal[True]
-    ) -> dict[str, Any]: ...
-    
-    def balances(
-            self,
-            currency: str | None = ...,
-            *,
-            raw: bool = ...
+        self, currency: str | None = ..., *, raw: bool = ...
     ) -> Balance | BalanceList | dict[str, Any]:
         """
         Fetch the balances for the authenticated user from the Buda API.
@@ -406,30 +321,17 @@ class PrivateAPI:
             :class:`BalanceList` object or the raw API response as a dictionary.
         """
         ...
-    
+
     @overload
     def create_order(
-            self,
-            market_id: str,
-            *,
-            payload: OrderCreate,
-            raw: Literal[False] = ...
+        self, market_id: str, *, payload: OrderCreate, raw: Literal[False] = ...
     ) -> OrderCreateResponse: ...
     @overload
     def create_order(
-            self,
-            market_id: str,
-            *,
-            payload: OrderCreate,
-            raw: Literal[True]
+        self, market_id: str, *, payload: OrderCreate, raw: Literal[True]
     ) -> dict[str, Any]: ...
-    
     def create_order(
-            self,
-            market_id: str,
-            *,
-            payload: OrderCreate,
-            raw: bool = ...
+        self, market_id: str, *, payload: OrderCreate, raw: bool = ...
     ) -> OrderCreateResponse | dict[str, Any]:
         """
         Create a new order in the specified market.
@@ -452,25 +354,10 @@ class PrivateAPI:
         ...
 
     @overload
-    def order_detail(
-            self,
-            order_id: int,
-            *,
-            raw: Literal[False] = ...
-    ) -> OrderDetail: ...
+    def order_detail(self, order_id: int, *, raw: Literal[False] = ...) -> OrderDetail: ...
     @overload
-    def order_detail(
-            self,
-            order_id: int,
-            *,
-            raw: Literal[True]
-    ) -> dict[str, Any]: ...
-    
-    def order_detail(
-            self,
-            order_id: int,
-            *, raw: bool = ...
-    ) -> OrderDetail | dict[str, Any]:
+    def order_detail(self, order_id: int, *, raw: Literal[True]) -> dict[str, Any]: ...
+    def order_detail(self, order_id: int, *, raw: bool = ...) -> OrderDetail | dict[str, Any]:
         """
         Fetch the details of a specific order from the Buda API.
 
@@ -490,23 +377,11 @@ class PrivateAPI:
         ...
 
     @overload
-    def cancel_order(
-            self,
-            order_id: int,
-            *, raw: Literal[False] = ...
-    ) -> OrderCancelResponse: ...
+    def cancel_order(self, order_id: int, *, raw: Literal[False] = ...) -> OrderCancelResponse: ...
     @overload
+    def cancel_order(self, order_id: int, *, raw: Literal[True]) -> dict[str, Any]: ...
     def cancel_order(
-            self,
-            order_id: int,
-            *, raw: Literal[True]
-    ) -> dict[str, Any]: ...
-    
-    def cancel_order(
-            self,
-            order_id: int,
-            *,
-            raw: bool = ...
+        self, order_id: int, *, raw: bool = ...
     ) -> OrderCancelResponse | dict[str, Any]:
         """
         Cancel a specific order in the Buda API.
@@ -521,34 +396,21 @@ class PrivateAPI:
         Returns
         -------
         OrderCancelResponse | dict[str, Any]
-            The response from the API, either as an :class:`OrderCancelResponse` 
+            The response from the API, either as an :class:`OrderCancelResponse`
             object or the raw API response as a dictionary.
         """
         ...
-    
+
     @overload
     def cancel_all_orders(
-            self,
-            market_id: str | None = ...,
-            type: str | None = ...,
-            *,
-            raw: Literal[False] = ...
+        self, market_id: str | None = ..., type: str | None = ..., *, raw: Literal[False] = ...
     ) -> OrderCancelAllResponse: ...
     @overload
     def cancel_all_orders(
-            self,
-            market_id: str | None = ...,
-            type: str | None = ...,
-            *,
-            raw: Literal[True]
+        self, market_id: str | None = ..., type: str | None = ..., *, raw: Literal[True]
     ) -> dict[str, Any]: ...
-    
     def cancel_all_orders(
-            self,
-            market_id: str | None = ...,
-            type: str | None = ...,
-            *,
-            raw: bool = ...
+        self, market_id: str | None = ..., type: str | None = ..., *, raw: bool = ...
     ) -> OrderCancelAllResponse | dict[str, Any]:
         """
         Cancel all orders in the Buda API.
@@ -571,7 +433,6 @@ class PrivateAPI:
         """
         ...
 
-
 class BudaClient(BaseClient[Client]):
     """Synchronous client for the Buda API."""
 
@@ -585,9 +446,7 @@ class BudaClient(BaseClient[Client]):
     """The public API endpoints for the Buda API."""
 
     def __init__(
-            self,
-            settings: BudaSettings | None = ...,
-            provider: BudaCredentials | None = ...
+        self, settings: BudaSettings | None = ..., provider: BudaCredentials | None = ...
     ) -> None:
         """
         Initialize the BudaClient instance.
@@ -600,42 +459,28 @@ class BudaClient(BaseClient[Client]):
             The credentials provider for the BudaClient, by default None.
         """
         ...
-    
+
     def __enter__(self) -> BudaClient: ...
-
     def __exit__(
-            self,
-            exc_type: type[BaseException] | None,
-            exc_value: BaseException | None,
-            traceback: TracebackType | None
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> None: ...
-
     def close(self) -> None:
         """Close the BudaClient instance and release any resources."""
         ...
-    
+
     @overload
     def _request(
-            self,
-            endpoint: Endpoint[T],
-            *,
-            raw: Literal[False] = ...,
-            authenticated: bool = ...
+        self, endpoint: Endpoint[T], *, raw: Literal[False] = ..., authenticated: bool = ...
     ) -> T: ...
     @overload
     def _request(
-            self,
-            endpoint: Endpoint[T],
-            *,
-            raw: Literal[True],
-            authenticated: bool = ...
+        self, endpoint: Endpoint[T], *, raw: Literal[True], authenticated: bool = ...
     ) -> dict[str, Any]: ...
-
     def _request(
-            self,
-            endpoint: Endpoint[T],
-            *, raw: bool = ...,
-            authenticated: bool = ...
+        self, endpoint: Endpoint[T], *, raw: bool = ..., authenticated: bool = ...
     ) -> T | dict[str, Any]:
         """
         Make an API request to the specified endpoint.
@@ -658,12 +503,7 @@ class BudaClient(BaseClient[Client]):
         ...
 
     def _raw_request(
-            self,
-            method: RequestMethod,
-            path: str,
-            *,
-            authenticated: bool = ...,
-            **kwargs: Any
+        self, method: RequestMethod, path: str, *, authenticated: bool = ..., **kwargs: Any
     ) -> dict[str, Any]:
         """
         Make a raw API request to the specified path.

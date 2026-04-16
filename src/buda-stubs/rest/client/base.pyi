@@ -9,11 +9,14 @@ from buda.rest.endpoints.base import Endpoint
 
 HttpxClient = Client | AsyncClient
 
-
 class BaseClient[T: HttpxClient]:
     """Base client class for Buda API clients."""
 
-    __slots__ = ("_auth", "_client", "_settings",)
+    __slots__ = (
+        "_auth",
+        "_client",
+        "_settings",
+    )
 
     _auth: BudaAuth | None
     """The credentials used for authentication, if any."""
@@ -23,10 +26,10 @@ class BaseClient[T: HttpxClient]:
     """The settings object containing client configurations."""
 
     def __init__(
-            self,
-            client: type[T],
-            settings: BudaSettings | None = ...,
-            provider: BudaCredentials | None = ...
+        self,
+        client: type[T],
+        settings: BudaSettings | None = ...,
+        provider: BudaCredentials | None = ...,
     ) -> None:
         """
         Initialize the BaseClient with the provided HTTP client type, settings, and credentials.

@@ -26,20 +26,17 @@ class BudaWebSocketClient:
     __slots__ = ("_pubsub_key", "_settings")
 
     def __init__(
-            self,
-            *,
-            pubsub_key: str | None = None,
-            settings: BudaSettings | None = None,
+        self,
+        *,
+        pubsub_key: str | None = None,
+        settings: BudaSettings | None = None,
     ) -> None:
         from buda.core.settings import BudaSettings
 
         self._pubsub_key: str | None = pubsub_key
         self._settings: BudaSettings = settings or BudaSettings()
 
-    def _build_url(
-            self,
-            *channels: Channel
-    ) -> str:
+    def _build_url(self, *channels: Channel) -> str:
         if not channels:
             raise ValueError("At least one channel is required.")
 
@@ -50,22 +47,22 @@ class BudaWebSocketClient:
         return urllib.parse.quote(url, safe=":/?=,")
 
     async def subscribe(
-            self,
-            *channels: Channel,
-            handler: EventHandler = default_handler,
-            events: set[str] | None = None,
+        self,
+        *channels: Channel,
+        handler: EventHandler = default_handler,
+        events: set[str] | None = None,
     ) -> None:
         url = self._build_url(*channels)
         channel_names = ", ".join(ch.name for ch in channels)
         logger.info("Subscribing to [%s] at %s", channel_names, url)
 
         async for ws in connect(
-                url,
-                ping_interval=self._settings.ping_interval,
-                ping_timeout=self._settings.ping_timeout,
-                close_timeout=self._settings.close_timeout,
-                open_timeout=self._settings.open_timeout,
-                user_agent_header=self._settings.user_agent,
+            url,
+            ping_interval=self._settings.ping_interval,
+            ping_timeout=self._settings.ping_timeout,
+            close_timeout=self._settings.close_timeout,
+            open_timeout=self._settings.open_timeout,
+            user_agent_header=self._settings.user_agent,
         ):
             try:
                 logger.info("Connected to %s", url)

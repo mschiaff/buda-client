@@ -74,6 +74,7 @@ def sync_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
             reraise=True,
         )
         return retrying(fn, self, *args, **kwargs)
+
     return wrapper
 
 
@@ -90,4 +91,5 @@ def async_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
             reraise=True,
         )
         return await retrying(fn, self, *args, **kwargs)
+
     return wrapper

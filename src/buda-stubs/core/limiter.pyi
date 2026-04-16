@@ -6,7 +6,6 @@ from buda.core.settings import BudaSettings
 
 logger: Logger = ...
 
-
 class SyncRateLimiter:
     """
     Proactive sliding-window rate limiter for synchronous requests.
@@ -60,7 +59,7 @@ class SyncRateLimiter:
             The settings object containing rate limit configurations.
         """
         ...
-    
+
     def _prune(self, window: deque[float], cutoff: float) -> None:
         """
         Remove timestamps from the left of the window that
@@ -74,7 +73,7 @@ class SyncRateLimiter:
             The cutoff time; timestamps <= this value will be removed.
         """
         ...
-    
+
     def acquire(self, *, authenticated: bool) -> None:
         """
         Acquire the rate limiter for a new request, sleeping if necessary
@@ -86,8 +85,6 @@ class SyncRateLimiter:
             Whether the request is authenticated.
         """
         ...
-    
-
 
 class AsyncRateLimiter:
     """
@@ -96,7 +93,7 @@ class AsyncRateLimiter:
     Same logic as :class:`SyncRateLimiter` but uses ``asyncio.Lock`` and
     ``asyncio.sleep``.
     """
-    
+
     __slots__ = (
         "_enabled",
         "_lock",
@@ -138,7 +135,7 @@ class AsyncRateLimiter:
             The settings object containing rate limit configurations.
         """
         ...
-    
+
     async def acquire(self, *, authenticated: bool) -> None:
         """
         Acquire the rate limiter for a new request, sleeping if necessary
