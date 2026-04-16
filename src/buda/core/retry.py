@@ -22,24 +22,17 @@ if TYPE_CHECKING:
 
     from buda.core.settings import BudaSettings
 
+
 logger = logging.getLogger("buda.retry")
 
 RETRYABLE_STATUS_CODES: frozenset[int] = frozenset({429, 500, 503})
 
 
 def is_retryable_error(exc: BaseException) -> bool:
-    """Return ``True`` if *exc* is an HTTP error with a retryable status code."""
     return isinstance(exc, HTTPStatusError) and exc.response.status_code in RETRYABLE_STATUS_CODES
 
 
 class _RetryAfterWait:
-    """Tenacity wait strategy that honours the ``Retry-After`` header.
-
-    If the last exception is a 429 with a ``Retry-After`` header the wait
-    time will be *at least* the value specified by the server.  Otherwise
-    it falls back to zero so a chained exponential strategy takes over.
-    """
-
     def __call__(self, retry_state: RetryCallState) -> float:
         exc = retry_state.outcome and retry_state.outcome.exception()
         if isinstance(exc, HTTPStatusError) and exc.response.status_code == 429:
@@ -58,7 +51,6 @@ class _RetryAfterWait:
 
 
 def _build_wait(settings: BudaSettings) -> WaitBaseT:
-    """Build a combined wait strategy: Retry-After header OR exponential backoff."""
     retry_after: Any = _RetryAfterWait()
     exponential: Any = wait_exponential(
         min=settings.retry_min_wait,
@@ -70,12 +62,6 @@ def _build_wait(settings: BudaSettings) -> WaitBaseT:
 
 
 def sync_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
-    """Decorator for synchronous methods that retries on 429 / 500 / 503.
-
-    Reads retry configuration from ``self._settings`` at call time, so each
-    client instance can have its own retry policy.
-    """
-
     @functools.wraps(fn)
     def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         if not self._settings.retry_enabled:
@@ -88,16 +74,10 @@ def sync_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
             reraise=True,
         )
         return retrying(fn, self, *args, **kwargs)
-
     return wrapper
 
 
 def async_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
-    """Decorator for async methods that retries on 429 / 500 / 503.
-
-    Same semantics as :func:`sync_retry_on_error` but for coroutines.
-    """
-
     @functools.wraps(fn)
     async def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         if not self._settings.retry_enabled:
@@ -110,5 +90,4 @@ def async_retry_on_error(fn: Callable[..., Any]) -> Callable[..., Any]:
             reraise=True,
         )
         return await retrying(fn, self, *args, **kwargs)
-
     return wrapper

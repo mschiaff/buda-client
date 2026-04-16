@@ -1,4 +1,5 @@
 {
     "ruff.nativeServer": true,
     "ruff.configurationPreference": "filesystemFirst",
+    "autoDocstring.docstringFormat": "numpy",
 }

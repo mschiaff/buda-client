@@ -15,23 +15,16 @@ if TYPE_CHECKING:
 
 
 class BudaAuth(httpx.Auth):
-    """Attach Buda HMAC authentication to the Request object."""
-
-    __slots__ = (
-        "api_key",
-        "api_secret",
-    )
+    __slots__ = ("api_key", "api_secret",)
 
     def __init__(self, api_key: str, api_secret: str):
         self.api_key = api_key
         self.api_secret = api_secret
 
     def get_nonce(self) -> str:
-        """Generate a nonce (timestamp in microseconds)"""
         return str(int(time.time() * 1e6))
 
     def sign(self, request: httpx.Request, nonce: str) -> str:
-        """Create the HMAC signature for the request."""
         components = [request.method, request.url.path]
 
         if request.content:
@@ -40,7 +33,11 @@ class BudaAuth(httpx.Auth):
         components.append(nonce)
         message = " ".join(components)
 
-        hash = hmac.new(key=self.api_secret.encode(), msg=message.encode(), digestmod="sha384")
+        hash = hmac.new(
+            key=self.api_secret.encode(),
+            msg=message.encode(),
+            digestmod="sha384"
+        )
 
         return hash.hexdigest()
 

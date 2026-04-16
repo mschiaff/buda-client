@@ -14,15 +14,6 @@ logger = logging.getLogger("buda.limiter")
 
 
 class SyncRateLimiter:
-    """Proactive sliding-window rate limiter for synchronous requests.
-
-    Tracks per-second (shared) and per-minute (auth vs unauth) request
-    timestamps and sleeps when the next request would exceed limits.
-
-    Each ``BudaClient`` instance owns its own limiter, since Buda rate
-    limits are scoped per IP (unauthenticated) and per API key (authenticated).
-    """
-
     __slots__ = (
         "_enabled",
         "_lock",
@@ -101,12 +92,6 @@ class SyncRateLimiter:
 
 
 class AsyncRateLimiter:
-    """Proactive sliding-window rate limiter for asynchronous requests.
-
-    Same logic as :class:`SyncRateLimiter` but uses ``asyncio.Lock`` and
-    ``asyncio.sleep``.
-    """
-
     __slots__ = (
         "_enabled",
         "_lock",

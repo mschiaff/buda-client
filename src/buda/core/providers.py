@@ -3,17 +3,19 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import Field, SecretStr, model_serializer
-from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
 
 
 class BudaCredentials(BaseSettings):
-    """Buda API credentials."""
-
     api_key: SecretStr = Field(..., validation_alias="buda_api_key")
     api_secret: SecretStr = Field(..., validation_alias="buda_api_secret")
 
     @model_serializer(mode="plain", return_type=dict[str, str])
-    def serialize(self) -> dict[str, str]:
+    def _serialize(self) -> dict[str, str]:
         return {
             "api_key": self.api_key.get_secret_value(),
             "api_secret": self.api_secret.get_secret_value(),
