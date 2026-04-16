@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-16
+
+### Features
+
+- Add project guidelines and commit conventions. Create stub files ([0ae282b](https://github.com/mschiaff/buda-client/commit/0ae282be81fae2adbaf087b8bdc457c76a3c6944))
+- **stubs:** API client and endpoint definitions for improved readability and maintainability ([64660ce](https://github.com/mschiaff/buda-client/commit/64660ce684368bdefd5f36765588ff64ceaa99e2))
+- Add _prune method to SyncRateLimiter for timestamp management to stub file ([3c4609b](https://github.com/mschiaff/buda-client/commit/3c4609bf679311086b806e5e4aff06d13c9d543e))
+
+### Bug Fixes
+
+- Add logger import and initialization to SyncRateLimiter for improved logging ([9b3b4ba](https://github.com/mschiaff/buda-client/commit/9b3b4ba51c30b9e0e863a0c3aefc039f0ad5e1fd))
+- **format:** Endpoint definitions and model validators for improved readability and consistency ([c833cd9](https://github.com/mschiaff/buda-client/commit/c833cd98def062f43f63195afc6fb510cdbbde6c))
+
 ## [0.1.0] - 2026-04-08
 
 ### Features
