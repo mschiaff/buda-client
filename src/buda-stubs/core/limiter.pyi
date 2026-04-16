@@ -57,6 +57,20 @@ class SyncRateLimiter:
         """
         ...
     
+    def _prune(self, window: deque[float], cutoff: float) -> None:
+        """
+        Remove timestamps from the left of the window that
+        are older than the cutoff.
+
+        Parameters
+        ----------
+        window : deque[float]
+            The deque of timestamps to prune.
+        cutoff : float
+            The cutoff time; timestamps <= this value will be removed.
+        """
+        ...
+    
     def acquire(self, *, authenticated: bool) -> None:
         """
         Acquire the rate limiter for a new request, sleeping if necessary
